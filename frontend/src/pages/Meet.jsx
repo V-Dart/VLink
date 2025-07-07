@@ -327,71 +327,75 @@ export default function Meet() {
         className={`flex-1 flex flex-col lg:flex-row gap-6 p-6 transition-all duration-300 ${isMenuOpen ? "ml-64" : "ml-20"} transition-all duration-300 ease-in-out`}
       >
         {/* Left Sidebar - Calendar */}
-        <aside className="w-full lg:w-80 flex-shrink-0">
-          <MiniCalendar selectedDate={selectedDate} onSelect={setSelectedDate} meetings={meetings} onViewAll={handleViewAll} />
-          {!googleConnected ? (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <FiCalendar className="w-5 h-5 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-blue-800 mb-1">Connect Calendar</h4>
-                  <p className="text-xs text-blue-600 mb-3">Sync with Google Calendar for automatic meeting creation</p>
-                  <button 
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                    onClick={handleConnectGoogle}
-                  >
-                    Connect
-                  </button>
+        <aside className="w-full lg:w-80 flex-shrink-0 sticky top-6 self-start h-fit">
+          <div>
+            <MiniCalendar selectedDate={selectedDate} onSelect={setSelectedDate} meetings={meetings} onViewAll={handleViewAll} />
+            {!googleConnected ? (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <FiCalendar className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-semibold text-blue-800 mb-1">Connect Calendar</h4>
+                    <p className="text-xs text-blue-600 mb-3">Sync with Google Calendar for automatic meeting creation</p>
+                    <button 
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      onClick={handleConnectGoogle}
+                    >
+                      Connect
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="bg-green-900/30 border border-green-700 rounded-xl p-4 mb-6 flex items-center gap-3">
-              <FiCheckCircle className="w-6 h-6 text-green-400" />
-              <span className="text-green-200 font-medium">Calendar Connected</span>
-            </div>
-          )}
+            ) : (
+              <div className="bg-green-900/30 border border-green-700 rounded-xl p-4 mb-6 flex items-center gap-3">
+                <FiCheckCircle className="w-6 h-6 text-green-400" />
+                <span className="text-green-200 font-medium">Calendar Connected</span>
+              </div>
+            )}
+          </div>
         </aside>
         
         {/* Main Content Area */}
         <div className="flex-1">
-          {/* Header */}
-          <div className="bg-[#1e293b] rounded-xl shadow-sm border border-[#334155] p-6 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-white">Meetings</h1>
-                <p className="text-white mt-1">Manage your meetings and schedule new ones</p>
-              </div>
-              <button 
-                className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-sm hover:bg-blue-700 transition-colors font-medium"
-                onClick={handleSchedule}
-              >
-                <FiPlus className="w-5 h-5" />
-                Schedule Meeting
-              </button>
-            </div>
-            
-            {/* Tabs */}
-            <div className="flex gap-1 bg-[#273549] p-1 rounded-lg">
-              {["Upcoming", "Past", "All"].map(tab => (
-                <button
-                  key={tab}
-                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    selectedTab === tab 
-                      ? "bg-[#1e293b] text-blue-400 shadow-sm" 
-                      : "text-white hover:text-blue-200"
-                  }`}
-                  onClick={() => setSelectedTab(tab)}
+          {/* Sticky Meetings Card (Header, Tabs) */}
+          <div className="sticky top-6 z-20 bg-[#0f172a] rounded-xl">
+            {/* Header */}
+            <div className="bg-[#1e293b] rounded-xl shadow-sm border border-[#334155] p-6 mb-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-white">Meetings</h1>
+                  <p className="text-white mt-1">Manage your meetings and schedule new ones</p>
+                </div>
+                <button 
+                  className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-sm hover:bg-blue-700 transition-colors font-medium"
+                  onClick={handleSchedule}
                 >
-                  {tab}
+                  <FiPlus className="w-5 h-5" />
+                  Schedule Meeting
                 </button>
-              ))}
+              </div>
+              
+              {/* Tabs */}
+              <div className="flex gap-1 bg-[#273549] p-1 rounded-lg">
+                {['Upcoming', 'Past', 'All'].map(tab => (
+                  <button
+                    key={tab}
+                    className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      selectedTab === tab 
+                        ? 'bg-[#1e293b] text-blue-400 shadow-sm' 
+                        : 'text-white hover:text-blue-200'
+                    }`}
+                    onClick={() => setSelectedTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-          
-          {/* Filters */}
+          {/* Filters (not sticky) */}
           <div className="bg-[#1e293b] rounded-xl shadow-sm border border-[#334155] p-6 mb-6">
             <h3 className="text-lg font-semibold text-white mb-4">Filters</h3>
             <div className="flex gap-4">
@@ -426,9 +430,8 @@ export default function Meet() {
               </div>
             </div>
           </div>
-          
-          {/* Meeting List */}
-          <div>
+          {/* Meeting List with scroll */}
+          <div className="max-h-[60vh] overflow-y-auto pr-2">
             {filteredMeetings.length === 0 ? (
               <div className="bg-[#1e293b] rounded-xl shadow-sm border border-[#334155] p-12 flex flex-col items-center justify-center text-center min-h-[300px]">
                 <div className="w-16 h-16 bg-[#273549] rounded-full flex items-center justify-center mb-6">
