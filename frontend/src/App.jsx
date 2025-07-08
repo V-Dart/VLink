@@ -11,6 +11,7 @@ import Meet from './pages/Meet';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import AuthCallback from './components/AuthCallback';
+import CustomerPortal from './pages/customer';
 
 
 function App() {
@@ -29,6 +30,8 @@ function App() {
         <Route path="/meet" element={<Meet />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="customerportal" element={<CustomerPortal />} />
+        {/* Add more routes as needed */}
       </Routes>
     </div>
   );

@@ -10,8 +10,11 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
-    unique: true
+    required: function() {
+      return !this.googleId && !this.linkedinId; // Only required if not OAuth user
+    },
+    unique: true,
+    sparse: true // Allows multiple null values for unique constraint
   },
   password: {
     type: String,
@@ -52,7 +55,21 @@ const userSchema = new mongoose.Schema({
     default: false
   },
   firstName: String,
-  lastName: String
+  lastName: String,
+  googleCalendarTokens: {
+    type: Object,
+    default: null
+  },
+  googleCalendarConnected: {
+    type: Boolean,
+    default: false
+  },
+  googleAccessToken: {
+    type: String
+  },
+  googleRefreshToken: {
+    type: String
+  }
 }, {
   timestamps: true
 });

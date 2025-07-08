@@ -66,43 +66,62 @@ router.post('/google/verify', async (req, res) => {
 });
 
 // @route    GET /api/auth/linkedin
-// @desc     Start LinkedIn OAuth process
-router.get('/linkedin', 
-  passport.authenticate('linkedin')
-);
+// @desc     Start LinkedIn OpenID Connect process
+router.get('/linkedin', (req, res, next) => {
+  console.log('Starting LinkedIn OpenID Connect authentication...');
+  passport.authenticate('linkedin-openid', {
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=linkedin_scope_error`
+  })(req, res, next);
+});
 
 // @route    GET /api/auth/linkedin/callback
-// @desc     LinkedIn OAuth callback
-router.get('/linkedin/callback',
-  passport.authenticate('linkedin', { session: false }),
-  (req, res) => {
+// @desc     LinkedIn OpenID Connect callback
+router.get('/linkedin/callback', (req, res, next) => {
+  console.log('LinkedIn callback received...');
+  console.log('Query params:', req.query);
+  
+  passport.authenticate('linkedin-openid', { 
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/login?error=linkedin_callback_failed`
+  }, (err, user, info) => {
+    if (err) {
+      console.error('LinkedIn authentication error:', err);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=linkedin_auth_error&details=${encodeURIComponent(err.message)}`);
+    }
+    
+    if (!user) {
+      console.error('LinkedIn authentication failed, no user returned');
+      console.log('Info:', info);
+      return res.redirect(`${process.env.CLIENT_URL}/login?error=linkedin_no_user`);
+    }
+    
     try {
       // Generate JWT token
       const payload = {
-        id: req.user._id,
-        email: req.user.email,
-        role: req.user.role
+        id: user._id,
+        email: user.email || null, // Email might not be available
+        role: user.role
       };
 
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
       // Redirect to frontend with token
       res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
-        id: req.user._id,
-        username: req.user.username,
-        email: req.user.email,
-        role: req.user.role,
-        profilePicture: req.user.profilePicture,
-        firstName: req.user.firstName,
-        lastName: req.user.lastName
+        id: user._id,
+        username: user.username,
+        email: user.email || null,
+        role: user.role,
+        profilePicture: user.profilePicture,
+        firstName: user.firstName,
+        lastName: user.lastName
       }))}`);
 
     } catch (error) {
       console.error('LinkedIn OAuth callback error:', error);
-      res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+      res.redirect(`${process.env.CLIENT_URL}/login?error=linkedin_token_error`);
     }
-  }
-);
+  })(req, res, next);
+});
 
 // @route    POST /api/auth/linkedin/verify
 // @desc     Verify LinkedIn token from frontend
