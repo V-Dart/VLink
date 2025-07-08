@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: function(){
-      return !this.googleId;
+      return !this.googleId && !this.linkedinId;
     }
   },
   email: {
@@ -16,13 +16,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: function(){
-      return !this.googleId;
+      return !this.googleId && !this.linkedinId;
     }
   },
   phone:{
     type: Number,
       required: function() {
-      return !this.googleId; // Only required if not Google OAuth user
+      return !this.googleId && !this.linkedinId; // Only required if not OAuth user
     }
   },
   role: {
@@ -35,10 +35,19 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true // Allows multiple null values
   },
+  linkedinId: {
+    type: String,
+    unique: true,
+    sparse: true // Allows multiple null values
+  },
   profilePicture: {
     type: String
   },
   isGoogleUser: {
+    type: Boolean,
+    default: false
+  },
+  isLinkedInUser: {
     type: Boolean,
     default: false
   },
@@ -49,7 +58,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password') || this.isGoogleUser) {
+  if (!this.isModified('password') || this.isGoogleUser || this.isLinkedInUser) {
     return next(); // Add return here
   }
   const salt = await bcrypt.genSalt(10);

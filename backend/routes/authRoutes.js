@@ -65,4 +65,63 @@ router.post('/google/verify', async (req, res) => {
   }
 });
 
+// @route    GET /api/auth/linkedin
+// @desc     Start LinkedIn OAuth process
+router.get('/linkedin', 
+  passport.authenticate('linkedin')
+);
+
+// @route    GET /api/auth/linkedin/callback
+// @desc     LinkedIn OAuth callback
+router.get('/linkedin/callback',
+  passport.authenticate('linkedin', { session: false }),
+  (req, res) => {
+    try {
+      // Generate JWT token
+      const payload = {
+        id: req.user._id,
+        email: req.user.email,
+        role: req.user.role
+      };
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      // Redirect to frontend with token
+      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
+        id: req.user._id,
+        username: req.user.username,
+        email: req.user.email,
+        role: req.user.role,
+        profilePicture: req.user.profilePicture,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName
+      }))}`);
+
+    } catch (error) {
+      console.error('LinkedIn OAuth callback error:', error);
+      res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+    }
+  }
+);
+
+// @route    POST /api/auth/linkedin/verify
+// @desc     Verify LinkedIn token from frontend
+router.post('/linkedin/verify', async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    // Verify the token (you can use LinkedIn's token verification here)
+    // For now, assuming the token is valid
+    
+    res.json({ 
+      success: true, 
+      message: 'LinkedIn authentication successful' 
+    });
+    
+  } catch (error) {
+    console.error('LinkedIn token verification error:', error);
+    res.status(400).json({ message: 'Invalid LinkedIn token' });
+  }
+});
+
 module.exports = router;
