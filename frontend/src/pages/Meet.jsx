@@ -142,12 +142,25 @@ function MiniCalendar({ selectedDate, onSelect, meetings, onViewAll }) {
 }
 
 // Enhanced Meeting Card with Teams-like design
-function MeetingCard({ meeting, onShowDetails }) {
+function MeetingCard({ meeting, onShowDetails, menuOpen, onMenuOpen, onMenuClose, onDelete, onCopyLink }) {
   const isUpcoming = meeting.status === 'upcoming';
   const timeUntil = meeting.time; // You can calculate actual time until meeting
-  
+  const menuRef = React.useRef();
+
+  // Close menu on outside click
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    function handleClick(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        onMenuClose();
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpen, onMenuClose]);
+
   return (
-    <div className="bg-[#1e293b] rounded-xl shadow-sm border border-[#334155] hover:shadow-md transition-all duration-200 mb-4 overflow-hidden">
+    <div className="bg-[#1e293b] rounded-xl shadow-sm border border-[#334155] hover:shadow-md transition-all duration-200 mb-4 overflow-visible">
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
@@ -158,7 +171,6 @@ function MeetingCard({ meeting, onShowDetails }) {
                 <span className="px-2 py-1 bg-blue-900/30 text-blue-300 text-xs font-medium rounded-full">{meeting.recurring}</span>
               )}
             </div>
-            
             <div className="flex items-center gap-4 text-sm text-white/80 mb-3">
               <div className="flex items-center gap-1">
                 <FiCalendar className="w-4 h-4" />
@@ -173,19 +185,42 @@ function MeetingCard({ meeting, onShowDetails }) {
                 <span>{meeting.participants.length} participants</span>
               </div>
             </div>
-            
             {meeting.description && (
               <p className="text-sm text-white/70 mb-4">{meeting.description}</p>
             )}
           </div>
-          
-          <div className="flex items-center gap-2">
-            <button className="p-2 text-white/40 hover:text-white hover:bg-[#273549] rounded-lg transition-colors">
+          <div className="flex items-center gap-2 relative" ref={menuRef}>
+            <button
+              className="p-2 text-white/40 hover:text-white hover:bg-[#273549] rounded-lg transition-colors"
+              onClick={menuOpen ? onMenuClose : onMenuOpen}
+              aria-label="Open menu"
+            >
               <FiMoreVertical className="w-4 h-4" />
             </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-[#273549] border border-[#334155] rounded-lg shadow-lg z-[1000] animate-fade-in">
+                <button
+                  className="w-full text-left px-4 py-2 text-white hover:bg-[#334155] transition-colors flex items-center gap-2"
+                  onClick={() => { onShowDetails(meeting); onMenuClose(); }}
+                >
+                  <FiEdit className="w-4 h-4" /> Edit
+                </button>
+                <button
+                  className="w-full text-left px-4 py-2 text-white hover:bg-[#334155] transition-colors flex items-center gap-2"
+                  onClick={onCopyLink}
+                >
+                  <FiLink className="w-4 h-4" /> Copy Link
+                </button>
+                <button
+                  className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-900/30 transition-colors flex items-center gap-2"
+                  onClick={onDelete}
+                >
+                  <FiTrash2 className="w-4 h-4" /> Delete
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button 
@@ -203,7 +238,6 @@ function MeetingCard({ meeting, onShowDetails }) {
               Copy Link
             </button>
           </div>
-          
           <div className="flex items-center gap-2">
             <button 
               className="p-2 text-white/40 hover:text-white hover:bg-[#273549] rounded-lg transition-colors"
@@ -279,10 +313,36 @@ export default function Meet() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [filter, setFilter] = useState({ date: null, assignedTo: "" });
   const [meetings, setMeetings] = useState(mockMeetings);
+  // Add state for scheduling form
+  const [scheduleForm, setScheduleForm] = useState({
+    title: '',
+    date: '',
+    time: '',
+    duration: '',
+    recurrence: 'One-time',
+    participants: '',
+    description: '',
+    meetLink: '',
+  });
+  const [formError, setFormError] = useState('');
   // In Meet component, add state and handler for 'View All' modal
   const [showAllMeetings, setShowAllMeetings] = useState(false);
   const handleViewAll = () => setShowAllMeetings(true);
   const handleCloseViewAll = () => setShowAllMeetings(false);
+
+  // Add kebab menu state
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  // Delete meeting handler
+  const handleDeleteMeeting = (id) => {
+    setMeetings(meetings => meetings.filter(m => m.id !== id));
+    setOpenMenuId(null);
+  };
+  // Copy link handler
+  const handleCopyLink = (link) => {
+    navigator.clipboard.writeText(link);
+    setOpenMenuId(null);
+  };
 
   // Handlers (replace with real logic)
   const handleConnectGoogle = () => setGoogleConnected(true);
@@ -290,6 +350,35 @@ export default function Meet() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowDetails = (meeting) => setShowDetails(meeting);
   const handleCloseDetails = () => setShowDetails(null);
+
+  // Add state for editing meeting
+  const [editForm, setEditForm] = useState(null);
+  const [editError, setEditError] = useState('');
+
+  // Start editing when showDetails is set
+  React.useEffect(() => {
+    if (showDetails) {
+      setEditForm({ ...showDetails });
+      setEditError('');
+    } else {
+      setEditForm(null);
+    }
+  }, [showDetails]);
+
+  // Save edited meeting
+  const handleSaveEdit = () => {
+    setEditError('');
+    if (!editForm.title || !editForm.date || !editForm.time || !editForm.duration || !editForm.participants || !editForm.meetLink) {
+      setEditError('Please fill in all required fields.');
+      return;
+    }
+    setMeetings(meetings => meetings.map(m => m.id === editForm.id ? {
+      ...editForm,
+      participants: typeof editForm.participants === 'string' ? editForm.participants.split(',').map(p => p.trim()).filter(Boolean) : editForm.participants,
+      duration: Number(editForm.duration),
+    } : m));
+    setShowDetails(null);
+  };
 
   // Update filteredMeetings to apply filters
   const filteredMeetings = meetings.filter(m => {
@@ -448,7 +537,16 @@ export default function Meet() {
               </div>
             ) : (
               filteredMeetings.map(m => (
-                <MeetingCard key={m.id} meeting={m} onShowDetails={handleShowDetails} />
+                <MeetingCard
+                  key={m.id}
+                  meeting={m}
+                  onShowDetails={handleShowDetails}
+                  menuOpen={openMenuId === m.id}
+                  onMenuOpen={() => setOpenMenuId(m.id)}
+                  onMenuClose={() => setOpenMenuId(null)}
+                  onDelete={() => handleDeleteMeeting(m.id)}
+                  onCopyLink={() => handleCopyLink(m.meetLink)}
+                />
               ))
             )}
           </div>
@@ -469,15 +567,50 @@ export default function Meet() {
                   </button>
                 </div>
               </div>
-              
               <div className="p-6">
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={e => {
+                  e.preventDefault();
+                  setFormError('');
+                  if (!scheduleForm.title || !scheduleForm.date || !scheduleForm.time || !scheduleForm.duration || !scheduleForm.participants || !scheduleForm.meetLink) {
+                    setFormError('Please fill in all required fields, including the meeting link.');
+                    return;
+                  }
+                  // Add new meeting to state
+                  setMeetings(prev => [
+                    ...prev,
+                    {
+                      id: prev.length ? Math.max(...prev.map(m => m.id)) + 1 : 1,
+                      title: scheduleForm.title,
+                      date: scheduleForm.date,
+                      time: scheduleForm.time,
+                      duration: Number(scheduleForm.duration),
+                      participants: scheduleForm.participants.split(',').map(p => p.trim()).filter(Boolean),
+                      meetLink: scheduleForm.meetLink,
+                      recurring: scheduleForm.recurrence !== 'One-time' ? scheduleForm.recurrence : null,
+                      status: 'upcoming',
+                      description: scheduleForm.description,
+                    }
+                  ]);
+                  setShowModal(false);
+                  setScheduleForm({
+                    title: '',
+                    date: '',
+                    time: '',
+                    duration: '',
+                    recurrence: 'One-time',
+                    participants: '',
+                    description: '',
+                    meetLink: '',
+                  });
+                }}>
                   <div className="relative">
                     <input
                       id="meeting-title"
                       className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder=" "
                       autoComplete="off"
+                      value={scheduleForm.title}
+                      onChange={e => setScheduleForm(f => ({ ...f, title: e.target.value }))}
                     />
                     <label htmlFor="meeting-title" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Meeting Title</label>
                   </div>
@@ -489,6 +622,8 @@ export default function Meet() {
                         className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder=" "
                         autoComplete="off"
+                        value={scheduleForm.date}
+                        onChange={e => setScheduleForm(f => ({ ...f, date: e.target.value }))}
                       />
                       <label htmlFor="meeting-date" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Date</label>
                     </div>
@@ -499,6 +634,8 @@ export default function Meet() {
                         className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder=" "
                         autoComplete="off"
+                        value={scheduleForm.time}
+                        onChange={e => setScheduleForm(f => ({ ...f, time: e.target.value }))}
                       />
                       <label htmlFor="meeting-time" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Time</label>
                     </div>
@@ -511,6 +648,8 @@ export default function Meet() {
                         className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder=" "
                         autoComplete="off"
+                        value={scheduleForm.duration}
+                        onChange={e => setScheduleForm(f => ({ ...f, duration: e.target.value }))}
                       />
                       <label htmlFor="meeting-duration" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Duration (minutes)</label>
                     </div>
@@ -518,7 +657,8 @@ export default function Meet() {
                       <select
                         id="meeting-recurrence"
                         className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        defaultValue="One-time"
+                        value={scheduleForm.recurrence}
+                        onChange={e => setScheduleForm(f => ({ ...f, recurrence: e.target.value }))}
                       >
                         <option>One-time</option>
                         <option>Daily</option>
@@ -534,6 +674,8 @@ export default function Meet() {
                       className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder=" "
                       autoComplete="off"
+                      value={scheduleForm.participants}
+                      onChange={e => setScheduleForm(f => ({ ...f, participants: e.target.value }))}
                     />
                     <label htmlFor="meeting-participants" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Participants (comma separated)</label>
                   </div>
@@ -543,9 +685,24 @@ export default function Meet() {
                       className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder=" "
                       rows="3"
+                      value={scheduleForm.description}
+                      onChange={e => setScheduleForm(f => ({ ...f, description: e.target.value }))}
                     />
                     <label htmlFor="meeting-description" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Description/Notes</label>
                   </div>
+                  {/* Meeting Link input */}
+                  <div className="relative">
+                    <input
+                      id="meeting-link"
+                      className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#0f172a] text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder=" "
+                      autoComplete="off"
+                      value={scheduleForm.meetLink}
+                      onChange={e => setScheduleForm(f => ({ ...f, meetLink: e.target.value }))}
+                    />
+                    <label htmlFor="meeting-link" className="absolute left-4 top-2 text-white/60 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Meeting Link (required)</label>
+                  </div>
+                  {formError && <div className="text-red-400 text-sm">{formError}</div>}
                   <div className="mb-3">
                     <label className="flex items-center gap-2 text-white/60">
                       <input type="checkbox" className="accent-blue-600" /> Recurring Meeting
@@ -574,78 +731,129 @@ export default function Meet() {
         )}
         
         {/* Meeting Details Modal */}
-        {showDetails && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-[#1e293b] rounded-xl shadow-xl w-full max-w-lg">
-              <div className="p-6 border-b border-gray-200">
+        {showDetails && editForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+            <div className="bg-[#111827] rounded-xl shadow-xl w-full max-w-lg">
+              <div className="p-6 border-b border-[#222b3a]">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-white">Meeting Details</h2>
+                  <h2 className="text-xl font-bold text-gray-100">Edit Meeting</h2>
                   <button 
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-gray-200 hover:bg-[#222b3a] rounded-lg transition-colors"
                     onClick={handleCloseDetails}
                   >
                     ✕
                   </button>
                 </div>
               </div>
-              
               <div className="p-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{showDetails.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <FiCalendar className="w-4 h-4" />
-                        <span>{format(parseISO(showDetails.date), "MMM dd, yyyy")}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <FiClock className="w-4 h-4" />
-                        <span>{showDetails.time} ({showDetails.duration} min)</span>
-                      </div>
+                <form className="space-y-5" onSubmit={e => { e.preventDefault(); handleSaveEdit(); }}>
+                  <div className="relative">
+                    <input
+                      className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder=" "
+                      autoComplete="off"
+                      value={editForm.title}
+                      onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+                    />
+                    <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Meeting Title</label>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative">
+                      <input
+                        type="date"
+                        className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder=" "
+                        autoComplete="off"
+                        value={editForm.date}
+                        onChange={e => setEditForm(f => ({ ...f, date: e.target.value }))}
+                      />
+                      <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Date</label>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="time"
+                        className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder=" "
+                        autoComplete="off"
+                        value={editForm.time}
+                        onChange={e => setEditForm(f => ({ ...f, time: e.target.value }))}
+                      />
+                      <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Time</label>
                     </div>
                   </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Participants</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {showDetails.participants.map((participant, index) => (
-                        <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                          {participant}
-                        </span>
-                      ))}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative">
+                      <input
+                        type="number"
+                        className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder=" "
+                        autoComplete="off"
+                        value={editForm.duration}
+                        onChange={e => setEditForm(f => ({ ...f, duration: e.target.value }))}
+                      />
+                      <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Duration (minutes)</label>
                     </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Meeting Link</h4>
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                      <FiLink className="w-4 h-4 text-gray-400" />
-                      <a 
-                        href={showDetails.meetLink} 
-                        className="text-blue-600 hover:text-blue-700 text-sm truncate flex-1"
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                    <div className="relative">
+                      <select
+                        className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={editForm.recurring || 'One-time'}
+                        onChange={e => setEditForm(f => ({ ...f, recurring: e.target.value }))}
                       >
-                        {showDetails.meetLink}
-                      </a>
+                        <option>One-time</option>
+                        <option>Daily</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
+                      </select>
+                      <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-focus:text-blue-400">Recurrence</label>
                     </div>
                   </div>
-                  
+                  <div className="relative">
+                    <input
+                      className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder=" "
+                      autoComplete="off"
+                      value={typeof editForm.participants === 'string' ? editForm.participants : editForm.participants.join(', ')}
+                      onChange={e => setEditForm(f => ({ ...f, participants: e.target.value }))}
+                    />
+                    <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Participants (comma separated)</label>
+                  </div>
+                  <div className="relative">
+                    <textarea
+                      className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder=" "
+                      rows="3"
+                      value={editForm.description}
+                      onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                    />
+                    <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Description/Notes</label>
+                  </div>
+                  <div className="relative">
+                    <input
+                      className="peer w-full px-4 pt-6 pb-2 border border-[#334155] rounded-lg bg-[#1e2333] text-gray-100 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder=" "
+                      autoComplete="off"
+                      value={editForm.meetLink}
+                      onChange={e => setEditForm(f => ({ ...f, meetLink: e.target.value }))}
+                    />
+                    <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all duration-200 peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">Meeting Link (required)</label>
+                  </div>
+                  {editError && <div className="text-red-400 text-sm">{editError}</div>}
                   <div className="flex gap-3 pt-4">
-                    <button 
-                      className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                      onClick={() => window.open(showDetails.meetLink, "_blank")}
+                    <button
+                      type="button"
+                      className="flex-1 bg-[#222b3a] text-gray-200 px-4 py-2 rounded-lg hover:bg-[#334155] transition-colors font-medium"
+                      onClick={handleCloseDetails}
                     >
-                      Join Meeting
+                      Cancel
                     </button>
-                    <button 
-                      className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-                      onClick={() => navigator.clipboard.writeText(showDetails.meetLink)}
+                    <button
+                      type="submit"
+                      className="flex-1 bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors font-medium"
                     >
-                      Copy Link
+                      Save Changes
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
