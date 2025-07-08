@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 
 const menuItems = [
-  { name: "Task", icon: <FaTasks />, to: "/task" },
+  { name: "Tickets", icon: <FaTasks />, to: "/task" },
   { name: "Live Chat", icon: <FaComments />, to: "/livechat" },
   { name: "PowerBI", icon: <FaChartBar />, to: "/powerbi" },
   { name: "Workspace", icon: <FaProjectDiagram />, to: "/workspace" },

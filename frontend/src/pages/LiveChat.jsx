@@ -9,40 +9,33 @@ import {
 import Sidebar from "./Sidebar";
 import SlideMenu from "./SlideMenu";
 
-// Mock chat data
-const mockChats = [
-  {
-    id: 1,
-    name: "John Doe",
-    lastMessage: "Can you send the latest invoice?",
-    time: "09:15 AM",
-    unread: 2,
-    avatar: null,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    lastMessage: "Thanks for the update!",
-    time: "Yesterday",
-    unread: 0,
-    avatar: null,
-  },
-  {
-    id: 3,
-    name: "Support Team",
-    lastMessage: "Your ticket has been resolved.",
-    time: "Mon",
-    unread: 1,
-    avatar: null,
-  },
+// Mock teams (should match those in Task.jsx)
+const mockTeams = [
+  { id: 1, name: "Alpha Team" },
+  { id: 2, name: "Beta Team" },
+  { id: 3, name: "Gamma Team" },
 ];
 
-const mockMessages = [
-  { id: 1, from: "them", text: "Hi! How can I help you today?", time: "09:00 AM" },
-  { id: 2, from: "me", text: "I need help with my order.", time: "09:01 AM" },
-  { id: 3, from: "them", text: "Sure! Can you provide your order ID?", time: "09:02 AM" },
-  { id: 4, from: "me", text: "#123456", time: "09:03 AM" },
-];
+// Mock messages per team
+const mockTeamMessages = {
+  "Alpha Team": [
+    { id: 1, from: "them", text: "Welcome to Alpha Team chat!", time: "09:00 AM" },
+    { id: 2, from: "me", text: "Hi Alpha Team!", time: "09:01 AM" },
+  ],
+  "Beta Team": [
+    { id: 1, from: "them", text: "Beta Team group chat started.", time: "10:00 AM" },
+  ],
+  "Gamma Team": [
+    { id: 1, from: "them", text: "Gamma Team, let's sync up!", time: "11:00 AM" },
+  ],
+};
+
+// Mock team members
+const mockTeamMembers = {
+  "Alpha Team": ["Alice", "Bob", "Charlie"],
+  "Beta Team": ["David", "Eve", "Frank"],
+  "Gamma Team": ["Grace", "Heidi", "Ivan"],
+};
 
 export default function LiveChat() {
   // Sidebar/Menu state and handlers (copied from Meet.jsx for consistency)
@@ -69,11 +62,20 @@ export default function LiveChat() {
     if (!isPermanent) setMenuOpen(false);
   };
 
-  const [chats, setChats] = useState(mockChats);
-  const [selectedChat, setSelectedChat] = useState(mockChats[0]);
-  const [messages, setMessages] = useState(mockMessages);
+  // Group chats for each team
+  const [teams] = useState(mockTeams);
+  const [selectedTeam, setSelectedTeam] = useState(teams[0].name);
+  const [teamMessages, setTeamMessages] = useState({ ...mockTeamMessages });
+  const messages = teamMessages[selectedTeam] || [];
   const [input, setInput] = useState("");
   const [search, setSearch] = useState("");
+
+  // Kebab menu state
+  const [showMenu, setShowMenu] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [showMembersModal, setShowMembersModal] = useState(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [renameValue, setRenameValue] = useState("");
 
   const chatWindowRef = useRef(null);
 
@@ -81,29 +83,13 @@ export default function LiveChat() {
     if (chatWindowRef.current) {
       chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
     }
-  }, [messages, selectedChat]);
-
-  const handleNewChat = () => {
-    const newId = chats.length + 1;
-    const newChat = {
-      id: newId,
-      name: `New Chat ${newId}`,
-      lastMessage: "Start your conversation...",
-      time: "Now",
-      unread: 0,
-      avatar: null,
-    };
-    setChats([newChat, ...chats]);
-    setSelectedChat(newChat);
-    setMessages([]);
-  };
+  }, [messages, selectedTeam]);
 
   const handleSend = (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-
     const newMessage = {
-      id: messages.length + 1,
+      id: (teamMessages[selectedTeam]?.length || 0) + 1,
       from: "me",
       text: input,
       time: new Date().toLocaleTimeString([], {
@@ -111,13 +97,34 @@ export default function LiveChat() {
         minute: "2-digit",
       }),
     };
-
-    setMessages([...messages, newMessage]);
+    setTeamMessages((prev) => ({
+      ...prev,
+      [selectedTeam]: [...(prev[selectedTeam] || []), newMessage],
+    }));
     setInput("");
   };
 
-  const filteredChats = chats.filter((chat) =>
-    chat.name.toLowerCase().includes(search.toLowerCase())
+  // Rename group handler (mock, just updates local state)
+  const handleRenameGroup = () => {
+    if (!renameValue.trim()) return;
+    setTeamMessages((prev) => {
+      const newTeamMessages = { ...prev };
+      newTeamMessages[renameValue] = newTeamMessages[selectedTeam] || [];
+      delete newTeamMessages[selectedTeam];
+      return newTeamMessages;
+    });
+    setSelectedTeam(renameValue);
+    setShowRenameModal(false);
+    setShowMenu(false);
+  };
+  // Leave group handler (mock, just closes modal)
+  const handleLeaveGroup = () => {
+    setShowLeaveModal(false);
+    setShowMenu(false);
+  };
+
+  const filteredTeams = teams.filter((team) =>
+    team.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -144,41 +151,35 @@ export default function LiveChat() {
           isMenuOpen ? "ml-64" : "ml-20"
         }`}
       >
-        {/* Chat List */}
+        {/* Team Group Chat List */}
         <aside className="w-full lg:w-80 flex-shrink-0">
           <div className="bg-[#1e293b] rounded-xl shadow-lg p-6 mb-6 border border-[#1e293b]">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Chats</h3>
-              <button
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                onClick={handleNewChat}
-              >
-                <FiPlus className="w-4 h-4" /> New Chat
-              </button>
+              <h3 className="text-lg font-semibold text-white">Team Group Chats</h3>
             </div>
             <div className="relative mb-4">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 w-5 h-5" />
               <input
                 type="text"
                 className="w-full pl-10 pr-4 py-2 border border-gray-700 rounded-lg bg-[#0f172a] text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Search chats..."
+                placeholder="Search teams..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {filteredChats.length === 0 ? (
-                <div className="text-white/60 text-center py-8">No chats found.</div>
+              {filteredTeams.length === 0 ? (
+                <div className="text-white/60 text-center py-8">No teams found.</div>
               ) : (
-                filteredChats.map((chat) => (
+                filteredTeams.map((team) => (
                   <button
-                    key={chat.id}
+                    key={team.id}
                     className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${
-                      selectedChat.id === chat.id
+                      selectedTeam === team.name
                         ? "bg-blue-900/30"
                         : "hover:bg-[#273549]"
                     }`}
-                    onClick={() => setSelectedChat(chat)}
+                    onClick={() => setSelectedTeam(team.name)}
                   >
                     <div className="w-10 h-10 bg-blue-800 rounded-full flex items-center justify-center text-white font-bold text-lg">
                       <FiUser className="w-6 h-6" />
@@ -186,21 +187,15 @@ export default function LiveChat() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-white truncate">
-                          {chat.name}
-                        </span>
-                        <span className="text-xs text-white/60 ml-2">
-                          {chat.time}
+                          {team.name} Chat
                         </span>
                       </div>
                       <div className="text-xs text-white/60 truncate">
-                        {chat.lastMessage}
+                        {teamMessages[team.name]?.length > 0
+                          ? teamMessages[team.name][teamMessages[team.name].length - 1].text
+                          : "No messages yet."}
                       </div>
                     </div>
-                    {chat.unread > 0 && (
-                      <span className="ml-2 bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {chat.unread}
-                      </span>
-                    )}
                   </button>
                 ))
               )}
@@ -218,14 +213,41 @@ export default function LiveChat() {
               </div>
               <div>
                 <div className="font-semibold text-white text-lg">
-                  {selectedChat.name}
+                  {selectedTeam} Chat
                 </div>
                 <div className="text-xs text-white/60">Online</div>
               </div>
             </div>
-            <button className="p-2 text-white/40 hover:text-white hover:bg-[#273549] rounded-lg transition-colors">
-              <FiMoreVertical className="w-5 h-5" />
-            </button>
+            <div className="relative">
+              <button
+                className="p-2 text-white/40 hover:text-white hover:bg-[#273549] rounded-lg transition-colors"
+                onClick={() => setShowMenu((v) => !v)}
+              >
+                <FiMoreVertical className="w-4 h-4" />
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#273549] border border-[#334155] rounded-lg shadow-lg z-50 animate-fade-in">
+                  <button
+                    className="w-full text-left px-4 py-2 text-white hover:bg-[#334155] transition-colors"
+                    onClick={() => { setShowRenameModal(true); setRenameValue(selectedTeam); setShowMenu(false); }}
+                  >
+                    Rename Group
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-white hover:bg-[#334155] transition-colors"
+                    onClick={() => { setShowMembersModal(true); setShowMenu(false); }}
+                  >
+                    View Members
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-900/30 transition-colors"
+                    onClick={() => { setShowLeaveModal(true); setShowMenu(false); }}
+                  >
+                    Leave Group
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Messages */}
@@ -274,6 +296,77 @@ export default function LiveChat() {
           </form>
         </div>
       </main>
+
+      {/* Rename Group Modal */}
+      {showRenameModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-[#1e293b] rounded-xl shadow-lg p-8 w-full max-w-xs border border-[#334155]">
+            <h2 className="text-lg font-bold text-white mb-4">Rename Group</h2>
+            <input
+              className="w-full px-4 py-2 rounded-lg bg-[#273549] text-white border border-[#334155] mb-4"
+              value={renameValue}
+              onChange={e => setRenameValue(e.target.value)}
+              placeholder="New group name"
+            />
+            <div className="flex gap-2">
+              <button
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                onClick={handleRenameGroup}
+              >
+                Rename
+              </button>
+              <button
+                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                onClick={() => setShowRenameModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* View Members Modal */}
+      {showMembersModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-[#1e293b] rounded-xl shadow-lg p-8 w-full max-w-xs border border-[#334155]">
+            <h2 className="text-lg font-bold text-white mb-4">Group Members</h2>
+            <ul className="mb-4">
+              {(mockTeamMembers[selectedTeam] || []).map((member, idx) => (
+                <li key={idx} className="text-white py-1">{member}</li>
+              ))}
+            </ul>
+            <button
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              onClick={() => setShowMembersModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Leave Group Modal */}
+      {showLeaveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-[#1e293b] rounded-xl shadow-lg p-8 w-full max-w-xs border border-[#334155]">
+            <h2 className="text-lg font-bold text-white mb-4">Leave Group</h2>
+            <p className="text-white mb-4">Are you sure you want to leave <span className="font-semibold">{selectedTeam} Chat</span>?</p>
+            <div className="flex gap-2">
+              <button
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                onClick={handleLeaveGroup}
+              >
+                Leave
+              </button>
+              <button
+                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                onClick={() => setShowLeaveModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
