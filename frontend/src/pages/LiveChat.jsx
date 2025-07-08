@@ -45,8 +45,30 @@ const mockMessages = [
 ];
 
 export default function LiveChat() {
+  // Sidebar/Menu state and handlers (copied from Meet.jsx for consistency)
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isPermanent, setPermanent] = useState(false);
+  const [isHoveringMenu, setIsHoveringMenu] = useState(false);
+
+  const handleHamburgerHover = () => {
+    if (!isPermanent) setMenuOpen(true);
+  };
+  const handleHamburgerLeave = () => {
+    if (!isPermanent && !isHoveringMenu) setMenuOpen(false);
+  };
+  const handleHamburgerClick = () => {
+    setPermanent((prev) => !prev);
+    setMenuOpen((prev) => (!isPermanent ? true : false));
+  };
+  const handleMenuHover = () => {
+    setIsHoveringMenu(true);
+    if (!isPermanent) setMenuOpen(true);
+  };
+  const handleMenuLeave = () => {
+    setIsHoveringMenu(false);
+    if (!isPermanent) setMenuOpen(false);
+  };
+
   const [chats, setChats] = useState(mockChats);
   const [selectedChat, setSelectedChat] = useState(mockChats[0]);
   const [messages, setMessages] = useState(mockMessages);
@@ -97,12 +119,6 @@ export default function LiveChat() {
   const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(search.toLowerCase())
   );
-
-  const handleHamburgerHover = () => {};
-  const handleHamburgerLeave = () => {};
-  const handleHamburgerClick = () => {};
-  const handleMenuHover = () => {};
-  const handleMenuLeave = () => {};
 
   return (
     <div className="min-h-screen bg-[#0f172a] flex relative">
