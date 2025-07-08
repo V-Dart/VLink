@@ -8,6 +8,9 @@ dotenv.config();
 const connectDB = require('./config/database');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const meetingRoutes = require('./routes/meetingRoutes');
+const calendarRoutes = require('./routes/calendarRoutes');
+const googleCalendarRoutes = require('./routes/googleCalendarRoutes');
 const cors = require('cors');
 require('./config/passport'); // Initialize passport config AFTER dotenv
 
@@ -37,6 +40,9 @@ app.use(passport.session());
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/meetings', meetingRoutes);
+app.use('/api/calendar', calendarRoutes);
+app.use('/api/google-calendar', googleCalendarRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

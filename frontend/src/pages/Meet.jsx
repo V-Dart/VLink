@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiPlus, FiCalendar, FiUsers, FiClock, FiLink, FiEdit, FiTrash2, FiCheckCircle, FiVideo, FiMoreVertical, FiShare2, FiDownload } from "react-icons/fi";
 import { format, addDays, startOfWeek, addHours, startOfDay, isSameDay, parseISO } from "date-fns";
 import Sidebar from "./Sidebar";
 import SlideMenu from "./SlideMenu";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import GoogleCalendarConnection from "../components/GoogleCalendarConnection";
+import GoogleCalendarSync from "../components/GoogleCalendarSync";
+import GoogleCalendarIntegration from "../components/GoogleCalendarIntegration";
+import GoogleCalendarService from "../services/googleCalendarService";
 
 // Enhanced mock data with more realistic meeting times and links
 const mockMeetings = [
@@ -142,7 +146,7 @@ function MiniCalendar({ selectedDate, onSelect, meetings, onViewAll }) {
 }
 
 // Enhanced Meeting Card with Teams-like design
-function MeetingCard({ meeting, onShowDetails, menuOpen, onMenuOpen, onMenuClose, onDelete, onCopyLink }) {
+function MeetingCard({ meeting, onShowDetails, menuOpen, onMenuOpen, onMenuClose, onDelete, onCopyLink, googleConnected, onMeetingUpdated }) {
   const isUpcoming = meeting.status === 'upcoming';
   const timeUntil = meeting.time; // You can calculate actual time until meeting
   const menuRef = React.useRef();
@@ -250,6 +254,13 @@ function MeetingCard({ meeting, onShowDetails, menuOpen, onMenuOpen, onMenuClose
             </button>
           </div>
         </div>
+        
+        {/* Google Calendar Integration */}
+        <GoogleCalendarIntegration 
+          meeting={meeting}
+          isConnected={googleConnected}
+          onMeetingUpdated={onMeetingUpdated}
+        />
       </div>
     </div>
   );
@@ -313,6 +324,7 @@ export default function Meet() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [filter, setFilter] = useState({ date: null, assignedTo: "" });
   const [meetings, setMeetings] = useState(mockMeetings);
+  const [showGoogleCalendarSync, setShowGoogleCalendarSync] = useState(false);
   // Add state for scheduling form
   const [scheduleForm, setScheduleForm] = useState({
     title: '',
@@ -348,6 +360,49 @@ export default function Meet() {
   const handleConnectGoogle = () => setGoogleConnected(true);
   const handleSchedule = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+
+  // Google Calendar handlers
+  const handleGoogleConnectionChange = (connected) => {
+    setGoogleConnected(connected);
+    if (connected) {
+      setShowGoogleCalendarSync(true);
+    }
+  };
+
+  const handleGoogleEventsImported = (importedMeetings) => {
+    setMeetings(prev => [...prev, ...importedMeetings]);
+  };
+
+  const handleMeetingUpdated = (updatedMeeting) => {
+    setMeetings(prev => prev.map(meeting => 
+      meeting._id === updatedMeeting._id ? updatedMeeting : meeting
+    ));
+  };
+
+  // Handle Google Calendar OAuth callback on component mount
+  useEffect(() => {
+    const handleGoogleCalendarCallback = async () => {
+      const urlParams = GoogleCalendarService.handleUrlParams();
+      
+      if (urlParams?.type === 'success' && urlParams.code) {
+        try {
+          await GoogleCalendarService.handleCallback(urlParams.code);
+          setGoogleConnected(true);
+          setShowGoogleCalendarSync(true);
+          // You could show a success message here
+          alert('Google Calendar connected successfully!');
+        } catch (error) {
+          console.error('Error handling Google Calendar callback:', error);
+          alert('Failed to connect Google Calendar. Please try again.');
+        }
+      } else if (urlParams?.type === 'error') {
+        console.error('Google Calendar auth error:', urlParams.error);
+        alert('Failed to connect Google Calendar. Please try again.');
+      }
+    };
+
+    handleGoogleCalendarCallback();
+  }, []);
   const handleShowDetails = (meeting) => setShowDetails(meeting);
   const handleCloseDetails = () => setShowDetails(null);
 
@@ -419,29 +474,14 @@ export default function Meet() {
         <aside className="w-full lg:w-80 flex-shrink-0 sticky top-6 self-start h-fit">
           <div>
             <MiniCalendar selectedDate={selectedDate} onSelect={setSelectedDate} meetings={meetings} onViewAll={handleViewAll} />
-            {!googleConnected ? (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiCalendar className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-blue-800 mb-1">Connect Calendar</h4>
-                    <p className="text-xs text-blue-600 mb-3">Sync with Google Calendar for automatic meeting creation</p>
-                    <button 
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                      onClick={handleConnectGoogle}
-                    >
-                      Connect
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-green-900/30 border border-green-700 rounded-xl p-4 mb-6 flex items-center gap-3">
-                <FiCheckCircle className="w-6 h-6 text-green-400" />
-                <span className="text-green-200 font-medium">Calendar Connected</span>
-              </div>
+            
+            <GoogleCalendarConnection onConnectionChange={handleGoogleConnectionChange} />
+            
+            {googleConnected && showGoogleCalendarSync && (
+              <GoogleCalendarSync 
+                isConnected={googleConnected} 
+                onEventsImported={handleGoogleEventsImported} 
+              />
             )}
           </div>
         </aside>
@@ -546,6 +586,8 @@ export default function Meet() {
                   onMenuClose={() => setOpenMenuId(null)}
                   onDelete={() => handleDeleteMeeting(m.id)}
                   onCopyLink={() => handleCopyLink(m.meetLink)}
+                  googleConnected={googleConnected}
+                  onMeetingUpdated={handleMeetingUpdated}
                 />
               ))
             )}
