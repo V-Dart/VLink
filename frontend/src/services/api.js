@@ -67,10 +67,25 @@ export const authAPI = {
     window.location.href = `${API_BASE_URL}/auth/google`;
   },
 
+  // LinkedIn OAuth login
+  linkedinLogin: () => {
+    window.location.href = `${API_BASE_URL}/auth/linkedin`;
+  },
+
   // Verify Google token
   verifyGoogleToken: async (token) => {
     try {
       const response = await api.post('/auth/google/verify', { token });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Verify LinkedIn token
+  verifyLinkedInToken: async (token) => {
+    try {
+      const response = await api.post('/auth/linkedin/verify', { token });
       return response;
     } catch (error) {
       throw error;

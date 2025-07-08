@@ -30,6 +30,10 @@ import React, { useState } from 'react';
       authAPI.googleLogin();
     };
 
+    const handleLinkedInLogin = () => {
+      authAPI.linkedinLogin();
+    };
+
      const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -406,7 +410,7 @@ import React, { useState } from 'react';
               <button
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-base transition-colors"
                 aria-label="Sign up with LinkedIn"
-                onClick={(e) => { e.preventDefault(); navigate('/dashboard'); }}
+                onClick={handleLinkedInLogin}
               >
                 <svg
                   className="w-[22px] h-[22px] fill-white"
