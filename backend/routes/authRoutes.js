@@ -28,7 +28,7 @@ router.get('/google/callback',
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
       // Redirect to frontend with token
-      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
+      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&provider=google&user=${encodeURIComponent(JSON.stringify({
         id: req.user._id,
         username: req.user.username,
         email: req.user.email,
@@ -106,7 +106,7 @@ router.get('/linkedin/callback', (req, res, next) => {
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
       // Redirect to frontend with token
-      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
+      res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}&provider=linkedin&user=${encodeURIComponent(JSON.stringify({
         id: user._id,
         username: user.username,
         email: user.email || null,
