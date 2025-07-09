@@ -64,12 +64,26 @@ export const authAPI = {
 
   // Google OAuth login
   googleLogin: () => {
-    window.location.href = `${API_BASE_URL}/auth/google`;
+    try {
+      // Store the current page to redirect back after auth
+      sessionStorage.setItem('preAuthUrl', window.location.pathname);
+      window.location.href = `${API_BASE_URL}/auth/google`;
+    } catch (error) {
+      console.error('Google OAuth initiation failed:', error);
+      throw error;
+    }
   },
 
   // LinkedIn OAuth login
   linkedinLogin: () => {
-    window.location.href = `${API_BASE_URL}/auth/linkedin`;
+    try {
+      // Store the current page to redirect back after auth
+      sessionStorage.setItem('preAuthUrl', window.location.pathname);
+      window.location.href = `${API_BASE_URL}/auth/linkedin`;
+    } catch (error) {
+      console.error('LinkedIn OAuth initiation failed:', error);
+      throw error;
+    }
   },
 
   // Verify Google token

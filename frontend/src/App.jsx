@@ -1,4 +1,4 @@
-import {Routes, Route} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -11,6 +11,7 @@ import Meet from './pages/Meet';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import AuthCallback from './components/AuthCallback';
+import ProtectedRoute from './components/ProtectedRoute';
 import CustomerPortal from './pages/customer';
 
 
@@ -21,17 +22,88 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/task" element={<Task />} />
-        <Route path="/livechat" element={<LiveChat />} />
-        <Route path="/powerbi" element={<PowerBI />} />
-        <Route path="/workspace" element={<Workspace />} />
-        <Route path="/pipelines" element={<Pipelines />} />
-        <Route path="/meet" element={<Meet />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="customerportal" element={<CustomerPortal />} />
-        {/* Add more routes as needed */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/task" 
+          element={
+            <ProtectedRoute>
+              <Task />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/livechat" 
+          element={
+            <ProtectedRoute>
+              <LiveChat />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/powerbi" 
+          element={
+            <ProtectedRoute>
+              <PowerBI />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/workspace" 
+          element={
+            <ProtectedRoute>
+              <Workspace />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/pipelines" 
+          element={
+            <ProtectedRoute>
+              <Pipelines />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/meet" 
+          element={
+            <ProtectedRoute>
+              <Meet />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/customerportal" 
+          element={
+            <ProtectedRoute>
+              <CustomerPortal />
+            </ProtectedRoute>
+          } 
+        />
+        {/* Redirect root to dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
   );

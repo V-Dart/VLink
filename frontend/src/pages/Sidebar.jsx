@@ -3,6 +3,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { FiSettings } from "react-icons/fi";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useState, useEffect } from "react";
+import { authAPI } from '../services/api';
+import { oauthService } from '../services/oauthService';
 import {
   FaTasks,
   FaComments,
@@ -34,11 +36,20 @@ export default function Sidebar({ toggleSlideMenu, onHamburgerHover, onHamburger
     }
   }, []);
 
-  const handleLogout = () => {
-    // Clear user data and navigate to login
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      // Use the OAuth service for comprehensive logout
+      await oauthService.performLogout();
+      console.log('Logout successful');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if API call fails, still clear local storage and redirect
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } finally {
+      // Navigate to login page
+      navigate('/login');
+    }
   };
 
   return (

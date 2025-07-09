@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { authAPI } from '../services/api';
+import { oauthService } from '../services/oauthService';
 import logo from '../assets/logo-profile.png';
 import illustration from '../assets/Signin.png';
 
@@ -11,6 +12,31 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Handle OAuth errors from URL parameters
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const errorMessages = {
+        'oauth_failed': 'OAuth authentication failed. Please try again.',
+        'processing_failed': 'Error processing authentication. Please try again.',
+        'missing_data': 'Authentication data is missing. Please try again.',
+        'linkedin_callback_failed': 'LinkedIn authentication failed. Please try again.',
+        'linkedin_auth_error': 'LinkedIn authentication error. Please try again.',
+        'linkedin_no_user': 'LinkedIn authentication failed - no user data received.',
+        'linkedin_token_error': 'LinkedIn token error. Please try again.',
+        'linkedin_scope_error': 'LinkedIn permission error. Please try again.'
+      };
+      
+      setError(errorMessages[errorParam] || 'Authentication failed. Please try again.');
+      
+      // Clear the error parameter from URL
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('error');
+      navigate({ search: newParams.toString() }, { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,7 +45,7 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     try {
-      authAPI.googleLogin();
+      oauthService.startGoogleAuth();
     } catch (error) {
       console.error('Google login error:', error);
       setError('Google login failed. Please try again.');
@@ -28,7 +54,7 @@ export default function Login() {
 
   const handleLinkedInLogin = () => {
     try {
-      authAPI.linkedinLogin();
+      oauthService.startLinkedInAuth();
     } catch (error) {
       console.error('LinkedIn login error:', error);
       setError('LinkedIn login failed. Please try again.');
