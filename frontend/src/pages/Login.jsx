@@ -108,7 +108,13 @@ export default function Login() {
   const isFilled = (val) => val && val.length > 0;
 
   return (
-    <div className="min-h-screen h-full flex flex-col lg:flex-row items-stretch bg-[#0f172a] font-sans overflow-hidden">
+    <div className="fixed inset-0 flex flex-col lg:flex-row items-stretch bg-[#0f172a] font-sans overflow-hidden" style={{ minHeight: '100vh', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      <style>{`
+        html, body {
+          overflow: hidden !important;
+          height: 100vh !important;
+        }
+      `}</style>
       {/* Left Panel: Illustration and Info (responsive) */}
       <div className="flex flex-1 flex-col justify-center items-center w-full lg:w-1/2 min-w-0 bg-[#0f172a] px-0 py-6 lg:py-10 lg:px-0 order-1 lg:order-none relative">
         {/* Logo absolutely positioned top-left */}

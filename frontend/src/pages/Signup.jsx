@@ -113,7 +113,7 @@ import React, { useState } from 'react';
     const [phoneFocused, setPhoneFocused] = useState(false);
     
     return (
-      <div className="min-h-screen h-screen flex flex-col lg:flex-row bg-[#0f172a] font-sans p-0 overflow-hidden">
+      <div className="fixed inset-0 flex flex-col lg:flex-row bg-[#0f172a] font-sans p-0 overflow-hidden" style={{ minHeight: '100vh', height: '100vh', width: '100vw', overflow: 'hidden' }}>
         {/* Left Panel: Illustration and Info (now first) */}
         <div className="hidden lg:flex w-1/2 min-w-[300px] bg-[#0f172a] flex-col items-center justify-center px-0 py-8 lg:px-0 lg:py-10">
           <div className="flex flex-col items-center justify-center w-full">
