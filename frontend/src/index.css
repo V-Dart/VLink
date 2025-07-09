@@ -1,0 +1,18 @@
+html, body {
+  min-height: 100vh;
+  background: #0f172a;
+  overscroll-behavior: none;
+}
+
+@tailwind components;
+@tailwind utilities;
+@tailwind base;
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #1e293b;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
