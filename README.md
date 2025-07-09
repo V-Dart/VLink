@@ -1,4 +1,4 @@
-# 🚀 VLink - Enterprise Communication & Collaboration Platform
+# 🚀 VLink - Modern CRM & Customer Relationship Management Platform
 
 <div align="center">
   <img src="frontend/src/assets/logo-profile.png" alt="VLink Logo" width="80" height="80">
@@ -9,7 +9,7 @@
   [![MongoDB](https://img.shields.io/badge/MongoDB-v6.17+-brightgreen.svg)](https://mongodb.com/)
   [![Express.js](https://img.shields.io/badge/Express.js-v5.1.0-lightgrey.svg)](https://expressjs.com/)
   
-  **A modern, full-stack enterprise platform for team communication, meeting management, and business intelligence.**
+  **A comprehensive CRM solution for sales teams, customer management, and business growth acceleration.**
 </div>
 
 ## 📋 Table of Contents
@@ -34,78 +34,94 @@
 
 ## 🎯 Overview
 
-VLink is a comprehensive enterprise communication and collaboration platform designed to streamline team workflows, enhance productivity, and provide powerful business intelligence tools. Built with modern web technologies, it offers a seamless experience across web and mobile platforms.
+VLink is a comprehensive Customer Relationship Management (CRM) platform designed to streamline sales processes, enhance customer relationships, and drive business growth. Built with modern web technologies, it provides sales teams with powerful tools for lead management, deal tracking, customer communication, and performance analytics.
 
 ### 🌟 Key Highlights
 
-- **🔐 Multi-Provider Authentication**: Support for Google OAuth, LinkedIn OAuth, and traditional email/password
-- **📅 Integrated Calendar Management**: Seamless Google Calendar integration with real-time synchronization
-- **🎥 Video Conferencing**: Built-in meeting management with scheduling and analytics
-- **💬 Real-time Communication**: Live chat functionality with persistent messaging
-- **📊 Business Intelligence**: Integrated PowerBI dashboards and custom analytics
-- **🎫 Task Management**: Comprehensive ticketing system with workflow automation
-- **🔄 Pipeline Management**: Visual workflow management for projects and processes
-- **🏢 Multi-tenant Architecture**: Support for multiple organizations and role-based access
+- **🎯 Lead Management**: Comprehensive lead capture, qualification, and nurturing system
+- **💼 Sales Pipeline**: Visual pipeline management with deal tracking and forecasting
+- **� Customer Portal**: Dedicated customer self-service portal with account management
+- **📊 Sales Analytics**: Advanced reporting and business intelligence with PowerBI integration
+- **📅 Meeting & Calendar**: Integrated scheduling with Google Calendar synchronization
+- **💬 Customer Communication**: Live chat and messaging for seamless customer support
+- **🎫 Ticket Management**: Customer support ticketing system with priority handling
+- **🔄 Workflow Automation**: Automated sales processes and customer journey mapping
+- **🔐 Multi-Role Access**: Role-based permissions for Sales Reps, Team Leaders, and Admins
 
 ## ✨ Features
 
-### 🔒 Authentication & Security
-- **Multi-Provider OAuth**: Google, LinkedIn, and traditional authentication
-- **JWT Token Management**: Secure token-based authentication with refresh tokens
-- **Role-Based Access Control**: Admin, Team Leader, Sales Rep, and Product Owner roles
-- **Session Management**: Secure session handling with automatic token refresh
-- **Security Headers**: Comprehensive security headers and CORS configuration
+### 🎯 Sales Management
+- **Lead Capture & Qualification**: Multi-channel lead capture with automated qualification
+- **Deal Pipeline Management**: Visual pipeline with drag-and-drop deal progression
+- **Sales Forecasting**: Advanced forecasting with historical data analysis
+- **Quote & Proposal Management**: Automated quote generation and approval workflows
+- **Territory Management**: Geographic and account-based territory assignments
 
-### 📅 Calendar & Meeting Management
-- **Google Calendar Integration**: Two-way synchronization with Google Calendar
-- **Meeting Scheduling**: Advanced meeting scheduling with conflict detection
-- **Video Conferencing**: Integrated video meeting capabilities
-- **Meeting Analytics**: Detailed meeting metrics and attendance tracking
-- **Calendar Sharing**: Team calendar visibility and sharing options
+### � Customer Management
+- **360° Customer View**: Complete customer profile with interaction history
+- **Customer Segmentation**: Advanced segmentation for targeted marketing
+- **Account Management**: Hierarchical account structure with multiple contacts
+- **Customer Portal**: Self-service portal for customer account management
+- **Communication History**: Complete timeline of all customer interactions
 
-### 💼 Business Tools
-- **Task Management**: Comprehensive ticketing system with priorities and assignments
-- **Live Chat**: Real-time messaging with file sharing and emoji support
-- **PowerBI Integration**: Embedded business intelligence dashboards
-- **Workspace Management**: Project and team workspace organization
-- **Pipeline Management**: Visual workflow and process management
+### 📊 Analytics & Reporting
+- **Sales Performance Dashboards**: Real-time sales metrics and KPIs
+- **PowerBI Integration**: Advanced business intelligence and custom reports
+- **Revenue Analytics**: Revenue tracking, trends, and forecasting
+- **Team Performance**: Individual and team performance metrics
+- **Customer Analytics**: Customer behavior and engagement analytics
 
-### 📱 User Experience
-- **Responsive Design**: Mobile-first design with cross-platform compatibility
-- **Dark Theme**: Modern dark theme with accessibility features
-- **Sidebar Navigation**: Intuitive navigation with hover effects and shortcuts
-- **Profile Management**: Comprehensive user profile with avatar support
-- **Notification System**: Real-time notifications and alerts
+### 🎫 Customer Support
+- **Ticket Management**: Comprehensive support ticketing system
+- **Live Chat**: Real-time customer support chat functionality
+- **Knowledge Base**: Self-service customer support articles
+- **SLA Management**: Service level agreement tracking and enforcement
+- **Escalation Management**: Automated escalation workflows
+
+### 🔄 Process Automation
+- **Workflow Designer**: Visual workflow creation and automation
+- **Email Automation**: Automated email sequences and follow-ups
+- **Task Automation**: Automated task creation and assignment
+- **Integration APIs**: REST APIs for third-party integrations
+- **Notification System**: Real-time alerts and notifications
+
+### 🔐 Security & Access Control
+- **Role-Based Permissions**: Granular access control for different user roles
+- **Multi-Factor Authentication**: Enhanced security with MFA support
+- **Data Encryption**: End-to-end encryption for sensitive customer data
+- **Audit Trails**: Complete audit logging for compliance
+- **GDPR Compliance**: Data protection and privacy compliance features
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     VLink Architecture                      │
+│                    VLink CRM Architecture                   │
 ├─────────────────────────────────────────────────────────────┤
 │  Frontend (React 19.1.0)          Backend (Node.js/Express)│
-│  ├── React Router DOM             ├── Express.js Server     │
-│  ├── Tailwind CSS                 ├── MongoDB Database      │
-│  ├── React Icons                  ├── JWT Authentication    │
-│  ├── Axios HTTP Client            ├── Passport.js OAuth     │
-│  └── Vite Build Tool              └── Google APIs           │
+│  ├── Customer Dashboard           ├── CRM API Server        │
+│  ├── Sales Pipeline UI            ├── MongoDB Database      │
+│  ├── Analytics Dashboard          ├── Lead Management       │
+│  ├── Customer Portal              ├── Deal Tracking         │
+│  └── Support Interface            └── Customer Management   │
 ├─────────────────────────────────────────────────────────────┤
-│  External Integrations                                      │
-│  ├── Google OAuth 2.0 & Calendar                          │
-│  ├── LinkedIn OAuth 2.0                                    │
-│  ├── PowerBI Embedded                                       │
-│  └── Video Conferencing APIs                               │
+│  CRM Integrations                                           │
+│  ├── Google Calendar & OAuth                               │
+│  ├── LinkedIn Sales Navigator                              │
+│  ├── PowerBI Analytics                                     │
+│  ├── Email Marketing Tools                                 │
+│  └── Video Conferencing                                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 🏢 System Design Principles
+### 🏢 CRM System Design Principles
 
-- **Microservices Architecture**: Modular backend services for scalability
-- **RESTful API Design**: Clean, consistent API endpoints with proper HTTP methods
-- **Component-Based Frontend**: Reusable React components with hooks and context
-- **Database Normalization**: Optimized MongoDB schema design
-- **Caching Strategy**: Efficient data caching with Redis integration
-- **Error Handling**: Comprehensive error handling with user-friendly messages
+- **Sales-Centric Architecture**: Optimized for sales process workflows
+- **Customer-First Design**: All features designed around customer lifecycle
+- **Scalable Lead Management**: Handle high-volume lead processing
+- **Real-Time Analytics**: Live dashboards and performance metrics
+- **Integration-Ready**: Built for seamless third-party integrations
+- **Mobile Sales Support**: Mobile-optimized for field sales teams
 
 ## 🚀 Quick Start
 
@@ -120,8 +136,8 @@ VLink is a comprehensive enterprise communication and collaboration platform des
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/vlink.git
-cd vlink
+git clone https://github.com/yourusername/vlink-crm.git
+cd vlink-crm
 
 # Install dependencies for both frontend and backend
 npm run install:all
@@ -130,11 +146,11 @@ npm run install:all
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
 
-# Start the development servers
+# Start the CRM development servers
 npm run dev
 ```
 
-Access the application at `http://localhost:5173`
+Access the CRM dashboard at `http://localhost:5173`
 
 ## 📦 Installation
 
@@ -182,34 +198,40 @@ NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 
 # Database Configuration
-MONGODB_URI=mongodb://localhost:27017/vlink
-DB_NAME=vlink
+MONGODB_URI=mongodb://localhost:27017/vlink_crm
+DB_NAME=vlink_crm
 
 # JWT Configuration
 JWT_SECRET=your_super_secure_jwt_secret_key_here
 JWT_EXPIRES_IN=1h
 
-# Google OAuth Configuration
+# Google OAuth Configuration (for Calendar integration)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
 
-# LinkedIn OAuth Configuration
+# LinkedIn OAuth Configuration (for Sales Navigator)
 LINKEDIN_CLIENT_ID=your_linkedin_client_id
 LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
 LINKEDIN_CALLBACK_URL=http://localhost:5000/api/auth/linkedin/callback
 
-# Session Configuration
-SESSION_SECRET=your_session_secret_key
-SESSION_MAX_AGE=86400000
+# CRM Configuration
+SALES_PIPELINE_STAGES=prospecting,qualification,proposal,negotiation,closed-won,closed-lost
+DEFAULT_CURRENCY=USD
+FISCAL_YEAR_START=01-01
 
-# Email Configuration (Optional)
+# Email Configuration (for automated campaigns)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
+SMTP_USER=your_crm_email@gmail.com
 SMTP_PASS=your_app_password
 
-# Redis Configuration (Optional)
+# PowerBI Configuration (for analytics)
+POWERBI_CLIENT_ID=your_powerbi_client_id
+POWERBI_CLIENT_SECRET=your_powerbi_client_secret
+POWERBI_TENANT_ID=your_tenant_id
+
+# Redis Configuration (for caching)
 REDIS_URL=redis://localhost:6379
 ```
 
@@ -224,13 +246,22 @@ VITE_CLIENT_URL=http://localhost:5173
 VITE_GOOGLE_CLIENT_ID=your_google_client_id
 VITE_LINKEDIN_CLIENT_ID=your_linkedin_client_id
 
-# Feature Flags
-VITE_ENABLE_GOOGLE_CALENDAR=true
-VITE_ENABLE_POWERBI=true
-VITE_ENABLE_VIDEO_CALLING=true
+# CRM Feature Flags
+VITE_ENABLE_SALES_PIPELINE=true
+VITE_ENABLE_CUSTOMER_PORTAL=true
+VITE_ENABLE_POWERBI_ANALYTICS=true
+VITE_ENABLE_EMAIL_CAMPAIGNS=true
+VITE_ENABLE_VIDEO_MEETINGS=true
+VITE_ENABLE_LEAD_SCORING=true
 
-# Analytics (Optional)
+# Sales Configuration
+VITE_DEFAULT_CURRENCY=USD
+VITE_SALES_QUOTA_PERIOD=quarterly
+VITE_PIPELINE_STAGES=prospecting,qualification,proposal,negotiation,closed
+
+# Analytics Configuration
 VITE_GA_TRACKING_ID=GA-XXXXXXXXX
+VITE_POWERBI_WORKSPACE_ID=your_powerbi_workspace_id
 VITE_SENTRY_DSN=https://your-sentry-dsn
 ```
 
@@ -239,19 +270,27 @@ VITE_SENTRY_DSN=https://your-sentry-dsn
 ### Supported Authentication Methods
 
 1. **Google OAuth 2.0**
-   - Seamless sign-in with Google accounts
-   - Automatic Google Calendar integration
-   - Profile picture and basic info import
+   - Seamless sign-in for sales teams
+   - Automatic Google Calendar integration for meeting scheduling
+   - Contact import from Google Contacts
 
 2. **LinkedIn OAuth 2.0**
-   - Professional network integration
-   - LinkedIn profile data import
-   - Business contact synchronization
+   - Professional network integration for lead prospecting
+   - LinkedIn Sales Navigator integration
+   - Automatic profile and company data import
 
 3. **Traditional Email/Password**
-   - Secure bcrypt password hashing
-   - Email verification workflow
-   - Password reset functionality
+   - Secure CRM user authentication
+   - Role-based access for Sales Reps, Team Leaders, and Admins
+   - Password policies and multi-factor authentication
+
+### CRM User Roles
+
+- **Admin**: Full system access, user management, system configuration
+- **Sales Manager**: Team oversight, pipeline management, reporting access
+- **Team Leader**: Team performance, lead assignment, quota management
+- **Sales Rep**: Lead management, deal tracking, customer interaction
+- **Customer**: Limited access to customer portal and support features
 
 ### Authentication Flow
 
@@ -276,50 +315,62 @@ const handleLogin = async (credentials) => {
 };
 ```
 
-## 📱 Features Deep Dive
+## 📱 CRM Features Deep Dive
 
-### 🎫 Task Management System
+### � Sales Pipeline Management
 
-The task management system provides comprehensive ticketing functionality:
+The sales pipeline is the heart of the CRM system:
 
-- **Priority Levels**: Critical, High, Medium, Low
-- **Status Tracking**: Open, In Progress, Resolved, Closed
-- **Assignment System**: Multi-user assignment with notifications
-- **Comments & Attachments**: Rich text comments with file uploads
-- **Time Tracking**: Built-in time logging and reporting
-- **Custom Fields**: Configurable custom fields per organization
+- **Visual Pipeline**: Drag-and-drop interface for deal progression
+- **Customizable Stages**: Configure pipeline stages based on your sales process
+- **Deal Forecasting**: Probability-based revenue forecasting
+- **Pipeline Analytics**: Conversion rates, velocity, and bottleneck analysis
+- **Automated Workflows**: Trigger actions based on deal stage changes
+- **Team Quotas**: Set and track individual and team sales quotas
 
-### 💬 Live Chat System
+### � Customer Relationship Management
 
-Real-time communication platform with:
+Comprehensive customer lifecycle management:
 
-- **Real-time Messaging**: WebSocket-based instant messaging
-- **File Sharing**: Support for images, documents, and multimedia
-- **Emoji Support**: Comprehensive emoji picker and reactions
-- **Message History**: Persistent message storage and search
-- **User Presence**: Online/offline status indicators
-- **Channel Management**: Public and private channels
+- **Lead Capture**: Multi-channel lead capture (web forms, API, manual entry)
+- **Lead Scoring**: Automated lead scoring based on engagement and fit
+- **Customer Profiles**: 360-degree customer view with interaction history
+- **Account Hierarchy**: Manage complex account structures with multiple contacts
+- **Customer Segmentation**: Advanced segmentation for targeted campaigns
+- **Relationship Mapping**: Visualize customer relationships and influencers
 
-### 📊 PowerBI Integration
+### 📊 Sales Analytics & Reporting
 
-Embedded business intelligence with:
+Powerful business intelligence for sales teams:
 
-- **Dashboard Embedding**: Seamless PowerBI dashboard integration
-- **Single Sign-On**: Automatic authentication with PowerBI
-- **Custom Reports**: User-defined report generation
-- **Data Refresh**: Automatic data synchronization
-- **Mobile Responsive**: Optimized for mobile viewing
+- **Sales Dashboards**: Real-time sales metrics and KPIs
+- **Revenue Reports**: Historical and forecasted revenue analysis
+- **Performance Tracking**: Individual and team performance metrics
+- **Activity Analytics**: Call, email, and meeting activity tracking
+- **Pipeline Reports**: Deal progression and conversion analysis
+- **Custom Reports**: Build custom reports with drag-and-drop interface
 
-### 🎥 Meeting Management
+### 🎫 Customer Support & Service
 
-Comprehensive meeting solution featuring:
+Integrated customer support functionality:
 
-- **Meeting Scheduling**: Advanced scheduling with conflict detection
-- **Google Calendar Sync**: Two-way synchronization
-- **Video Conferencing**: Integrated video calling
-- **Meeting Analytics**: Attendance tracking and meeting metrics
-- **Recording**: Meeting recording and playback
-- **Screen Sharing**: Built-in screen sharing capabilities
+- **Ticket Management**: Comprehensive support ticket system
+- **SLA Management**: Service level agreement tracking and alerts
+- **Knowledge Base**: Self-service customer support articles
+- **Live Chat**: Real-time customer support chat
+- **Escalation Rules**: Automated ticket escalation workflows
+- **Customer Satisfaction**: Post-interaction satisfaction surveys
+
+### 🔄 Sales Process Automation
+
+Streamline repetitive sales tasks:
+
+- **Email Sequences**: Automated email campaigns and follow-ups
+- **Task Automation**: Automatic task creation and assignment
+- **Lead Routing**: Intelligent lead distribution to sales reps
+- **Approval Workflows**: Quote and discount approval processes
+- **Data Enrichment**: Automatic contact and company data enrichment
+- **Integration Triggers**: Webhook-based third-party integrations
 
 ## 🛠️ Development
 
