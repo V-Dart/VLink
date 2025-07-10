@@ -7,9 +7,9 @@ import Sidebar from './pages/Sidebar.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+
     <BrowserRouter>
     <App />
     </BrowserRouter>
-  </StrictMode>
+
 )
