@@ -6,16 +6,16 @@ import {
   FaChartBar,
   FaProjectDiagram,
   FaStream,
-  FaVideo,
+  FaCogs,
 } from "react-icons/fa";
 
 const menuItems = [
-  { name: "Tickets", icon: <FaTasks />, to: "/task" },
-  { name: "Live Chat", icon: <FaComments />, to: "/livechat" },
+  { name: "Task", icon: <FaTasks />, to: "/task" },
+  { name: "Teams", icon: <FaComments />, to: "/livechat" },
   { name: "PowerBI", icon: <FaChartBar />, to: "/powerbi" },
   { name: "Workspace", icon: <FaProjectDiagram />, to: "/workspace" },
   { name: "Pipelines", icon: <FaStream />, to: "/pipelines" },
-  { name: "Meet", icon: <FaVideo />, to: "/meet" },
+  { name: "Client Config", icon: <FaCogs />, to: "/client-config" },
 ];
 
 export default function SlideMenu({ isOpen, onClose, onMenuHover, onMenuLeave }) {
