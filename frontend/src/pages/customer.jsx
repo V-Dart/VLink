@@ -355,8 +355,9 @@ export default function CustomerPortal() {
     { label: "Dashboard", icon: <FaHome />, section: "dashboard" },
     { label: "Orders", icon: <FaShoppingBag />, section: "orders" },
     { label: "Feedback", icon: <FaRegCommentDots />, section: "feedback" },
-    { label: "Help Center", icon: <FaHeadset />, section: "helpcenter" },
+    { label: "Support", icon: <FaHeadset />, section: "support" },
     { label: "FAQ", icon: <FaQuestionCircle />, section: "faq" },
+    { label: "Contact", icon: <FaEnvelope />, section: "contact" },
   ];
 
   return (
@@ -962,58 +963,51 @@ export default function CustomerPortal() {
             </div>
           )}
 
-          {/* Help Center Section (merged Support & Contact) */}
-          {activeSection === 'helpcenter' && (
+          {activeSection === 'support' && (
             <div>
-              <h1 className="text-4xl font-bold text-white mb-6">Help Center</h1>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Contact Information */}
+              <h1 className="text-4xl font-bold text-white mb-6">Support</h1>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">Contact Information</h3>
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaEnvelope className="text-blue-400 text-xl" />
-                    <span className="text-white font-medium">Email Support</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <FaEnvelope className="text-blue-400" />
+                      <span className="text-white">support@company.com</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaPhoneAlt className="text-green-400" />
+                      <span className="text-white">+1 (800) 123-4567</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaClock className="text-yellow-400" />
+                      <span className="text-white">Mon–Fri, 9am–6pm EST</span>
+                    </div>
                   </div>
-                  <p className="text-slate-400 mb-2">support@company.com</p>
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaPhoneAlt className="text-green-400 text-xl" />
-                    <span className="text-white font-medium">Phone Support</span>
-                  </div>
-                  <p className="text-slate-400 mb-2">+1 (800) 123-4567</p>
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaClock className="text-yellow-400 text-xl" />
-                    <span className="text-white font-medium">Support Hours</span>
-                  </div>
-                  <p className="text-slate-400 mb-2">Mon–Fri, 9am–6pm EST</p>
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaStar className="text-yellow-400 text-xl" />
-                    <span className="text-white font-medium">Satisfaction</span>
-                  </div>
-                  <p className="text-slate-400 mb-2">4.9/5 rating</p>
-                  <p className="text-slate-500 text-sm">Based on 10,000+ reviews</p>
                 </div>
-                {/* Quick Actions */}
                 <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">Quick Actions</h3>
-                  <button
-                    onClick={() => toggleSection('issue')}
-                    className="w-full flex items-center gap-3 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors mb-3"
-                  >
-                    <FaExclamationCircle />
-                    Report an Issue
-                  </button>
-                  <button
-                    onClick={() => setActiveSection('faq')}
-                    className="w-full flex items-center gap-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
-                  >
-                    <FaQuestionCircle />
-                    Browse FAQ
-                  </button>
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => toggleSection('issue')}
+                      className="w-full flex items-center gap-3 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors"
+                    >
+                      <FaExclamationCircle />
+                      Report an Issue
+                    </button>
+                    <button
+                      onClick={() => setActiveSection('faq')}
+                      className="w-full flex items-center gap-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors"
+                    >
+                      <FaQuestionCircle />
+                      Browse FAQ
+                    </button>
+                  </div>
                 </div>
               </div>
-              {/* Issue Form (expandable) */}
+              
+              {/* Issue Form */}
               {openSection === 'issue' && (
-                <div className="mb-8">
+                <div className="mt-6">
                   <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
                     <div className="flex items-center gap-3 mb-6">
                       <FaExclamationCircle className="text-red-400 text-xl" />
@@ -1112,6 +1106,38 @@ export default function CustomerPortal() {
                       )}
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSection === 'contact' && (
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-6">Contact Us</h1>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <FaEnvelope className="text-blue-400 text-xl" />
+                    <h3 className="text-lg font-bold text-white">Email Support</h3>
+                  </div>
+                  <p className="text-slate-400 mb-2">support@company.com</p>
+                  <p className="text-slate-500 text-sm">We respond within 24 hours</p>
+                </div>
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <FaPhoneAlt className="text-green-400 text-xl" />
+                    <h3 className="text-lg font-bold text-white">Phone Support</h3>
+                  </div>
+                  <p className="text-slate-400 mb-2">+1 (800) 123-4567</p>
+                  <p className="text-slate-500 text-sm">Mon–Fri, 9am–6pm EST</p>
+                </div>
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <FaStar className="text-yellow-400 text-xl" />
+                    <h3 className="text-lg font-bold text-white">Satisfaction</h3>
+                  </div>
+                  <p className="text-slate-400 mb-2">4.9/5 rating</p>
+                  <p className="text-slate-500 text-sm">Based on 10,000+ reviews</p>
                 </div>
               </div>
             </div>
