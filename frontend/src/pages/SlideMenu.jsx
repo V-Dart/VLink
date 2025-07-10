@@ -6,7 +6,6 @@ import {
   FaChartBar,
   FaProjectDiagram,
   FaStream,
-  FaVideo,
 } from "react-icons/fa";
 
 const menuItems = [
@@ -15,7 +14,6 @@ const menuItems = [
   { name: "PowerBI", icon: <FaChartBar />, to: "/powerbi" },
   { name: "Workspace", icon: <FaProjectDiagram />, to: "/workspace" },
   { name: "Pipelines", icon: <FaStream />, to: "/pipelines" },
-  { name: "Meet", icon: <FaVideo />, to: "/meet" },
 ];
 
 export default function SlideMenu({ isOpen, onClose, onMenuHover, onMenuLeave }) {

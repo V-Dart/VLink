@@ -7,7 +7,6 @@ import LiveChat from './pages/LiveChat';
 import PowerBI from './pages/PowerBI';
 import Workspace from './pages/Workspace';
 import Pipelines from './pages/Pipelines';
-import Meet from './pages/Meet';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import AuthCallback from './components/AuthCallback';
@@ -67,14 +66,6 @@ function App() {
           element={
             <ProtectedRoute>
               <Pipelines />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/meet" 
-          element={
-            <ProtectedRoute>
-              <Meet />
             </ProtectedRoute>
           } 
         />
