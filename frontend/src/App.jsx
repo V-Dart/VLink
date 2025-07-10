@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import AuthCallback from './components/AuthCallback';
 import ProtectedRoute from './components/ProtectedRoute';
 import CustomerPortal from './pages/customer';
+import ClientWorkspaceConfig from './pages/ClientWorkspaceConfig';
 
 
 function App() {
@@ -102,6 +103,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/client-config" element={<ClientWorkspaceConfig />} />
         {/* Redirect root to dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
