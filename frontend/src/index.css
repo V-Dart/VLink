@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-=======
-html, body {
-  min-height: 100vh;
-  background: #0f172a;
-  overscroll-behavior: none;
-}
-
->>>>>>> origin/sheeja
 @tailwind components;
 @tailwind utilities;
 @tailwind base;
