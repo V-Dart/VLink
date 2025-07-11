@@ -5,10 +5,10 @@ import React, { useState } from "react";
 
 // Dummy user data for demonstration. Replace with your context or props.
 const dummyUser = {
-  first_name: "John",
-  last_name: "Doe",
-  phone: "123-456-7890",
-  email: "john.doe@example.com",
+  first_name: "rithik",
+  last_name: "sanjjay",
+  phone: "9345602647",
+  email: "rithiksanjjay@gmail.com",
   designation: "Software Engineer",
   department: "Engineering",
   employee_id: "EMP12345",

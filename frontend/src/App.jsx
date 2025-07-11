@@ -7,12 +7,12 @@ import LiveChat from './pages/LiveChat';
 import PowerBI from './pages/PowerBI';
 import Workspace from './pages/Workspace';
 import Pipelines from './pages/Pipelines';
-import Meet from './pages/Meet';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import AuthCallback from './components/AuthCallback';
 import ProtectedRoute from './components/ProtectedRoute';
 import CustomerPortal from './pages/customer';
+import ClientWorkspaceConfig from './pages/ClientWorkspaceConfig';
 
 
 function App() {
@@ -71,14 +71,6 @@ function App() {
           } 
         />
         <Route 
-          path="/meet" 
-          element={
-            <ProtectedRoute>
-              <Meet />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
           path="/settings" 
           element={
             <ProtectedRoute>
@@ -102,6 +94,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/client-config" element={<ClientWorkspaceConfig />} />
         {/* Redirect root to dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
