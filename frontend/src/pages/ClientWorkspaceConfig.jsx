@@ -36,15 +36,57 @@ import {
   FaCalendarAlt
 } from "react-icons/fa";
 
+// ICONS mapping for dynamic icon rendering
+const ICONS = {
+  FaTools,
+  FaCalendarAlt,
+  FaCreditCard,
+  FaComments,
+  FaTicketAlt,
+  FaQuestion,
+  FaListUl,
+  FaWarehouse,
+  FaTruck,
+  FaArrowDown,
+  FaHeadset,
+  FaShoppingCart,
+  // Add more icons as needed
+};
+
+// Add color mapping for Tailwind-safe classes
+const COLOR_CLASSES = {
+  blue: { text: 'text-blue-400', bg: 'bg-blue-500' },
+  green: { text: 'text-green-400', bg: 'bg-green-500' },
+  purple: { text: 'text-purple-400', bg: 'bg-purple-500' },
+  red: { text: 'text-red-400', bg: 'bg-red-500' },
+  orange: { text: 'text-orange-400', bg: 'bg-orange-500' },
+  teal: { text: 'text-teal-400', bg: 'bg-teal-500' },
+};
+
 // Preview Modal Component
-function PreviewModal({ isOpen, onClose, onConfirm, config, companyType }) {
+function PreviewModal({ isOpen, onClose, config, companyType }) {
+  const [loading, setLoading] = useState(false);
   if (!isOpen) return null;
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    try {
+      // The onConfirm function was removed from props, so this block is effectively removed.
+      // The modal will now only close on button click.
+      onClose();
+      setTimeout(() => {
+        alert(`Configuration preview closed.`);
+      }, 100);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getEnabledSections = () => {
     return config.dashboardSections.filter(section => section.enabled);
   };
 
-  const primaryColorClass = `bg-${config.branding.primaryColor}-500`;
+  const color = COLOR_CLASSES[config.branding.primaryColor] || COLOR_CLASSES.blue;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -58,13 +100,13 @@ function PreviewModal({ isOpen, onClose, onConfirm, config, companyType }) {
         
         <div className="p-6 overflow-y-auto max-h-[70vh]">
           {/* Preview Header */}
-          <div className="mb-6 p-4 bg-[#0f172a] rounded-lg border border-gray-600">
+          <div className={`mb-6 p-4 ${color.bg} rounded-lg border border-gray-600`}>
             <div className="flex items-center gap-4 mb-4">
               {config.branding.logo && (
                 <img src={config.branding.logo} alt="Logo" className="w-12 h-12 object-contain" />
               )}
               <div>
-                <h1 className={`text-2xl font-bold text-${config.branding.primaryColor}-400`}>
+                <h1 className={`text-2xl font-bold ${color.text}`}>
                   {companyType === 'service' ? 'Service Portal' : 'Product Portal'}
                 </h1>
                 <p className="text-gray-300">{config.branding.welcomeMessage}</p>
@@ -74,28 +116,33 @@ function PreviewModal({ isOpen, onClose, onConfirm, config, companyType }) {
 
           {/* Preview Dashboard Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {getEnabledSections().map((section) => (
-              <div key={section.id} className="bg-[#0f172a] p-4 rounded-lg border border-gray-600">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={`text-lg text-${config.branding.primaryColor}-400`}>{section.icon}</span>
-                  <h3 className="text-white font-medium">{section.name}</h3>
+            {getEnabledSections().map((section) => {
+              const IconComponent = ICONS[section.icon];
+              return (
+                <div key={section.id} className="bg-[#0f172a] p-4 rounded-lg border border-gray-600">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`text-lg ${color.text}`}>
+                      {IconComponent && <IconComponent />}
+                    </span>
+                    <h3 className="text-white font-medium">{section.name}</h3>
+                  </div>
+                  <p className="text-gray-400 text-sm">
+                    {section.name === 'Orders' && 'View and track your orders'}
+                    {section.name === 'Feedback' && 'Share your feedback with us'}
+                    {section.name === 'Help' && 'Get help and support'}
+                    {section.name === 'Chat' && 'Live chat with our team'}
+                    {section.name === 'Tickets' && 'Manage support tickets'}
+                    {section.name === 'FAQs' && 'Frequently asked questions'}
+                    {section.name === 'Service Requests' && 'Submit service requests'}
+                    {section.name === 'Appointments' && 'Schedule appointments'}
+                    {section.name === 'Billing' && 'View billing information'}
+                    {section.name === 'Inventory' && 'Check product availability'}
+                    {section.name === 'Shipping' && 'Track shipments'}
+                    {section.name === 'Returns' && 'Process returns'}
+                  </p>
                 </div>
-                <p className="text-gray-400 text-sm">
-                  {section.name === 'Orders' && 'View and track your orders'}
-                  {section.name === 'Feedback' && 'Share your feedback with us'}
-                  {section.name === 'Help' && 'Get help and support'}
-                  {section.name === 'Chat' && 'Live chat with our team'}
-                  {section.name === 'Tickets' && 'Manage support tickets'}
-                  {section.name === 'FAQs' && 'Frequently asked questions'}
-                  {section.name === 'Service Requests' && 'Submit service requests'}
-                  {section.name === 'Appointments' && 'Schedule appointments'}
-                  {section.name === 'Billing' && 'View billing information'}
-                  {section.name === 'Inventory' && 'Check product availability'}
-                  {section.name === 'Shipping' && 'Track shipments'}
-                  {section.name === 'Returns' && 'Process returns'}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Preview Form Fields */}
@@ -145,16 +192,9 @@ function PreviewModal({ isOpen, onClose, onConfirm, config, companyType }) {
         <div className="flex justify-end gap-3 p-4 border-t border-gray-600">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
             className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2 transition-colors"
           >
-            <FaSave />
-            Confirm & Save
+            Close
           </button>
         </div>
       </div>
@@ -389,6 +429,8 @@ export default function ClientWorkspaceConfig() {
   const [companyType, setCompanyType] = useState("service"); // service or product
   const [showPreview, setShowPreview] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Branding state
   const [branding, setBranding] = useState({
@@ -399,22 +441,22 @@ export default function ClientWorkspaceConfig() {
 
   // Service-based dashboard sections
   const serviceSections = [
-    { id: 1, name: "Service Requests", icon: <FaTools />, enabled: true },
-    { id: 2, name: "Appointments", icon: <FaCalendarAlt />, enabled: true },
-    { id: 3, name: "Billing", icon: <FaCreditCard />, enabled: true },
-    { id: 4, name: "Chat", icon: <FaComments />, enabled: false },
-    { id: 5, name: "Tickets", icon: <FaTicketAlt />, enabled: true },
-    { id: 6, name: "FAQs", icon: <FaQuestion />, enabled: true }
+    { id: 1, name: "Service Requests", icon: "FaTools", enabled: true },
+    { id: 2, name: "Appointments", icon: "FaCalendarAlt", enabled: true },
+    { id: 3, name: "Billing", icon: "FaCreditCard", enabled: true },
+    { id: 4, name: "Chat", icon: "FaComments", enabled: false },
+    { id: 5, name: "Tickets", icon: "FaTicketAlt", enabled: true },
+    { id: 6, name: "FAQs", icon: "FaQuestion", enabled: true }
   ];
 
   // Product-based dashboard sections
   const productSections = [
-    { id: 1, name: "Orders", icon: <FaListUl />, enabled: true },
-    { id: 2, name: "Inventory", icon: <FaWarehouse />, enabled: true },
-    { id: 3, name: "Shipping", icon: <FaTruck />, enabled: true },
-    { id: 4, name: "Returns", icon: <FaArrowDown />, enabled: false },
-    { id: 5, name: "Support", icon: <FaHeadset />, enabled: true },
-    { id: 6, name: "FAQs", icon: <FaQuestion />, enabled: true }
+    { id: 1, name: "Orders", icon: "FaListUl", enabled: true },
+    { id: 2, name: "Inventory", icon: "FaWarehouse", enabled: true },
+    { id: 3, name: "Shipping", icon: "FaTruck", enabled: true },
+    { id: 4, name: "Returns", icon: "FaArrowDown", enabled: false },
+    { id: 5, name: "Support", icon: "FaHeadset", enabled: true },
+    { id: 6, name: "FAQs", icon: "FaQuestion", enabled: true }
   ];
 
   // Dashboard sections state (dynamically set based on company type)
@@ -620,7 +662,9 @@ export default function ClientWorkspaceConfig() {
     closeCustomizeModal();
   };
 
-  const saveConfiguration = () => {
+  const saveConfiguration = async () => {
+    setSaving(true);
+    setSaveSuccess(false);
     const config = {
       companyType,
       branding,
@@ -634,9 +678,11 @@ export default function ClientWorkspaceConfig() {
     localStorage.setItem('clientWorkspaceConfig', JSON.stringify(config));
     
     console.log("Saving configuration:", config);
-    alert(`Configuration ${isEditing ? 'updated' : 'saved'} successfully!`);
     setShowPreview(false);
     setIsEditing(true); // Set to editing mode after first save
+    setSaving(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
   };
 
   const handlePreview = () => {
@@ -662,9 +708,7 @@ export default function ClientWorkspaceConfig() {
       />
 
       {/* Separator Line */}
-      {isMenuOpen && (
-        <div className="fixed top-0 left-16 h-full z-10"></div>
-      )}
+      <div className="fixed top-0 left-16 h-full z-10 border-l-2 border-gray-700 pointer-events-none"></div>
 
       {/* Slide-out panel */}
       <SlideMenu
@@ -818,44 +862,48 @@ export default function ClientWorkspaceConfig() {
               Dashboard Layout Control - {companyType === 'service' ? 'Service' : 'Product'} Based
             </h2>
             <div className="space-y-3">
-              {dashboardSections.map((section, index) => (
-                <div key={section.id} className="flex items-center justify-between p-3 bg-[#0f172a] rounded-lg border border-gray-600">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={section.enabled}
-                      onChange={() => toggleSection(section.id)}
-                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-lg">{section.icon}</span>
-                    <span className="text-white font-medium">{section.name}</span>
+              {dashboardSections.map((section, index) => {
+                const IconComponent = ICONS[section.icon];
+                const color = COLOR_CLASSES[branding.primaryColor] || COLOR_CLASSES.blue;
+                return (
+                  <div key={section.id} className="flex items-center justify-between p-3 bg-[#0f172a] rounded-lg border border-gray-600">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={section.enabled}
+                        onChange={() => toggleSection(section.id)}
+                        className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                      />
+                      <span className={`text-lg ${color.text}`}>{IconComponent && <IconComponent />}</span>
+                      <span className="text-white font-medium">{section.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleCustomizeSection(section)}
+                        className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
+                      >
+                        <FaCog />
+                        Customize
+                      </button>
+                      <button
+                        onClick={() => moveSectionUp(section.id)}
+                        disabled={index === 0}
+                        className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <FaArrowUp />
+                      </button>
+                      <button
+                        onClick={() => moveSectionDown(section.id)}
+                        disabled={index === dashboardSections.length - 1}
+                        className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <FaArrowDown />
+                      </button>
+                      <FaGripVertical className="text-gray-500 cursor-move" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleCustomizeSection(section)}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
-                    >
-                      <FaCog />
-                      Customize
-                    </button>
-                    <button
-                      onClick={() => moveSectionUp(section.id)}
-                      disabled={index === 0}
-                      className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <FaArrowUp />
-                    </button>
-                    <button
-                      onClick={() => moveSectionDown(section.id)}
-                      disabled={index === dashboardSections.length - 1}
-                      className="p-1 text-gray-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <FaArrowDown />
-                    </button>
-                    <FaGripVertical className="text-gray-500 cursor-move" />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -1042,9 +1090,9 @@ export default function ClientWorkspaceConfig() {
             <button
               onClick={saveConfiguration}
               className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 transition-colors text-lg"
+              disabled={saving}
             >
-              <FaSave />
-              {isEditing ? 'Update Configuration' : 'Save Configuration'}
+              {saving ? (<><FaSave className="animate-spin" /> Saving...</>) : saveSuccess ? (<><FaCheck /> Saved!</>) : (<><FaSave /> {isEditing ? 'Update Configuration' : 'Save Configuration'}</>)}
             </button>
           </div>
         </div>
@@ -1054,7 +1102,6 @@ export default function ClientWorkspaceConfig() {
       <PreviewModal
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}
-        onConfirm={saveConfiguration}
         config={config}
         companyType={companyType}
       />
