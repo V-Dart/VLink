@@ -29,7 +29,7 @@
 - [🐛 Testing](#-testing)
 - [🚀 Deployment](#-deployment)
 - [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+- [📄 License](#-linse)
 
 ## 🎯 Overview
 
@@ -762,7 +762,7 @@ When reporting issues, please include:
 
 ## 📄 License
 
-This project is licensed by DART.
+This project is licensed by VDart.
 
 ## 🙏 Acknowledgments
 
