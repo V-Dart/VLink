@@ -3,7 +3,6 @@
 <div align="center">
   <img src="frontend/src/assets/logo-profile.png" alt="VLink Logo" width="80" height="80">
   
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Node.js](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
   [![React](https://img.shields.io/badge/React-v19.1.0-blue.svg)](https://reactjs.org/)
   [![MongoDB](https://img.shields.io/badge/MongoDB-v6.17+-brightgreen.svg)](https://mongodb.com/)
@@ -30,7 +29,7 @@
 - [🐛 Testing](#-testing)
 - [🚀 Deployment](#-deployment)
 - [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+- [📄 License](#-linse)
 
 ## 🎯 Overview
 
@@ -763,7 +762,7 @@ When reporting issues, please include:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed by VDart.
 
 ## 🙏 Acknowledgments
 
