@@ -18,6 +18,7 @@ import {
   FaUserCircle
 } from "react-icons/fa";
 import logo from "../assets/logo-profile.png";
+import ProfilePicture from "../components/ProfilePicture";
 
 export default function Sidebar({ toggleSlideMenu, onHamburgerHover, onHamburgerLeave, isPermanent }) {
   const navigate = useNavigate();
@@ -77,19 +78,11 @@ export default function Sidebar({ toggleSlideMenu, onHamburgerHover, onHamburger
       <div className="flex flex-col items-center gap-4">
         <div className="relative group">
           <NavLink to="/profile">
-            {userProfile?.profilePicture ? (
-              <img 
-                src={userProfile.profilePicture} 
-                alt="Profile" 
-                className="w-5 h-5 rounded-full object-cover hover:ring-2 hover:ring-gray-300 transition-all"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'block';
-                }}
-              />
-            ) : null}
-            <FaUserCircle 
-              className={`text-white text-xl hover:text-gray-300 ${userProfile?.profilePicture ? 'hidden' : 'block'}`} 
+            <ProfilePicture 
+              src={userProfile?.profilePicture}
+              alt="Profile"
+              size="small"
+              className="hover:ring-2 hover:ring-gray-300 transition-all"
             />
           </NavLink>
           <span className="absolute left-10 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
