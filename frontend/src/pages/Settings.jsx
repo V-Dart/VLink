@@ -44,6 +44,14 @@ export default function Settings() {
     setSecurity({ ...security, [e.target.name]: e.target.value });
   };
 
+  // Ensure sidebar is open when Profile tab is selected
+  const handleTabClick = (tabLabel) => {
+    setSelectedTab(tabLabel);
+    if (tabLabel === "Profile") {
+      setMenuOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0f172a] flex relative">
       <Sidebar
@@ -87,7 +95,7 @@ export default function Settings() {
                       ? 'bg-[#1e293b] text-blue-400 shadow-sm'
                       : 'text-white hover:text-blue-200'
                   }`}
-                  onClick={() => setSelectedTab(tab.label)}
+                  onClick={() => handleTabClick(tab.label)}
                 >
                   {tab.icon} {tab.label}
                 </button>

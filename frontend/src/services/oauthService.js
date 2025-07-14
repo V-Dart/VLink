@@ -44,6 +44,9 @@ export const oauthService = {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(enhancedUser));
 
+      // Dispatch custom event to notify components
+      window.dispatchEvent(new CustomEvent('userUpdated'));
+
       return enhancedUser;
     } catch (error) {
       console.error('Failed to process OAuth callback:', error);

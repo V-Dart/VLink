@@ -56,6 +56,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);
+      
+      // Dispatch custom event to notify components
+      window.dispatchEvent(new CustomEvent('userUpdated'));
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -78,6 +81,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+      
+      // Dispatch custom event to notify components
+      window.dispatchEvent(new CustomEvent('userUpdated'));
     }
   };
 
