@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo ""
+
+# Get list of unstaged files (working directory vs index)
+unstaged_files=$(git diff --name-only)
+
+# Check if any unstaged file is inside frontend/ or backend/
+if echo "$unstaged_files" | grep -qE '^(frontend/|backend/)'; then
+  echo "🚫 Commit blocked!"
+  echo "⚠️  You have **unstaged changes** inside 'frontend/' or 'backend/' directories."
+  echo "⚠️  Make sure you're at the root '/Link' and have staged those changes."
+  echo "💡 Tip: Use 'git add frontend' and 'git add backend' before committing."
+  echo ""
+  exit 1
+fi
