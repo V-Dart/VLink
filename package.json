@@ -1,0 +1,25 @@
+{
+  "name": "vlink",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">   <img src=\"frontend/src/assets/logo-profile.png\" alt=\"VLink Logo\" width=\"80\" height=\"80\">",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V-Dart/VLink.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/V-Dart/VLink/issues"
+  },
+  "homepage": "https://github.com/V-Dart/VLink#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
