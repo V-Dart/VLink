@@ -34,8 +34,8 @@ const Profile = () => {
     phone: user?.phone || '',
   });
 
-  // Sidebar/SlideMenu state and handlers
-  const [isMenuOpen, setMenuOpen] = useState(true); // Sidebar open by default for Profile
+  // Sidebar/SlideMenu state and handlers (like Settings)
+  const [isMenuOpen, setMenuOpen] = useState(false);
   const [isPermanent, setPermanent] = useState(false);
   const [isHoveringMenu, setIsHoveringMenu] = useState(false);
 
@@ -90,9 +90,9 @@ const Profile = () => {
         onMenuLeave={handleMenuLeave}
       />
       <main
-        className={`flex-1 flex flex-col items-center py-10 transition-all duration-300 ${isMenuOpen ? "ml-64" : "ml-20"} transition-all duration-300 ease-in-out`}
+        className={`flex-1 flex flex-col items-start py-10 transition-all duration-300 ${isMenuOpen ? "ml-64" : "ml-20"}`}
       >
-        <div className="bg-[#273549] rounded-xl shadow-lg p-8 w-full max-w-4xl border border-[#334155]">
+        <div className="bg-[#273549] rounded-xl shadow-lg p-8 w-full max-w-4xl border border-[#334155] ml-40">
           <div className="border-b border-[#334155] pb-6 mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">Employee Profile</h1>
             <p className="text-white/60 text-base">Manage your personal and professional information</p>
