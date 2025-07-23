@@ -13,6 +13,13 @@ import AuthCallback from './components/AuthCallback';
 import ProtectedRoute from './components/ProtectedRoute';
 import CustomerPortal from './pages/customer';
 import ClientWorkspaceConfig from './pages/ClientWorkspaceConfig';
+import PODashboard from './pages/po/Dashboard';
+import POClientConfig from './pages/po/ClientConfig';
+import POManageDB from './pages/po/ManageDB';
+import POLogs from './pages/po/Logs';
+import POIssues from './pages/po/Issues';
+import POSettings from './pages/po/Settings';
+import POLogout from './pages/po/Logout';
 
 
 function App() {
@@ -95,6 +102,14 @@ function App() {
           } 
         />
         <Route path="/client-config" element={<ClientWorkspaceConfig />} />
+        {/* Product Owner Portal Routes */}
+        <Route path="/po/dashboard" element={<PODashboard />} />
+        <Route path="/po/client-config" element={<POClientConfig />} />
+        <Route path="/po/manage-db" element={<POManageDB />} />
+        <Route path="/po/logs" element={<POLogs />} />
+        <Route path="/po/issues" element={<POIssues />} />
+        <Route path="/po/settings" element={<POSettings />} />
+        <Route path="/po/logout" element={<POLogout />} />
         {/* Redirect root to dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
