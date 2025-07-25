@@ -43,7 +43,6 @@ export default function PODashboard() {
   const [hovered, setHovered] = useState(-1);
 
   return (
-      return (
     <div className="min-h-screen bg-[#0f172a] flex relative">
       <Sidebar />
       <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 py-4 sm:py-6 ml-[60px]">
