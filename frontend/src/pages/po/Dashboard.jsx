@@ -43,46 +43,76 @@ export default function PODashboard() {
   const [hovered, setHovered] = useState(-1);
 
   return (
+      return (
     <div className="min-h-screen bg-[#0f172a] flex relative">
       <Sidebar />
-      <main className="flex-1 flex flex-col items-center justify-center px-4 ml-[60px]">
-        <h1 className="text-2xl font-semibold mb-4 text-white text-center font-sans">VLink Product Owner - Dashboard</h1>
+      <main className="flex-1 flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 py-4 sm:py-6 ml-[60px]">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 sm:mb-6 text-white text-center font-sans">VLink Product Owner - Dashboard</h1>
+        
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mb-10">
-          {stats.map((stat, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8 w-full max-w-6xl">
+          {stats.map((stat, index) => (
             <div
-              key={stat.label}
-              className={`relative group flex flex-col items-center p-8 rounded-2xl shadow-2xl border border-gray-800 bg-gradient-to-br ${stat.color} hover:scale-[1.06] hover:shadow-3xl transition-all duration-300 cursor-pointer perspective-800`}
-              style={{ minHeight: 180 }}
-              onMouseEnter={() => setHovered(idx)}
+              key={index}
+              className={`bg-gradient-to-r ${stat.color} p-4 sm:p-6 rounded-xl shadow-lg transform transition-all duration-300 ${
+                hovered === index ? 'scale-105' : 'scale-100'
+              } cursor-pointer`}
+              onMouseEnter={() => setHovered(index)}
               onMouseLeave={() => setHovered(-1)}
             >
-              <div className="mb-2 drop-shadow-xl">{stat.icon}</div>
-              <span className="text-4xl font-extrabold text-white mb-1 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg">{stat.value}</span>
-              {/* Animated title reveal */}
-              <span className={`absolute left-1/2 -translate-x-1/2 bottom-6 px-4 py-2 rounded-lg bg-black/70 text-white text-base font-semibold shadow-lg transition-all duration-300 ${hovered === idx ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} pointer-events-none`}>{stat.label}</span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-white/80 text-xs sm:text-sm font-medium">{stat.label}</p>
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">{stat.value}</p>
+                </div>
+                <div className="flex-shrink-0">
+                  {stat.icon}
+                </div>
+              </div>
             </div>
           ))}
         </div>
         {/* Animated Bar Chart */}
-        <div className="w-full max-w-3xl bg-[#181f2e] rounded-2xl p-8 border border-gray-800 shadow-2xl flex flex-col items-center">
-          <h2 className="text-lg font-semibold text-white mb-6 font-sans">Weekly Issue Activity</h2>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={chartData} className="font-sans">
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" />
-                  <stop offset="100%" stopColor="#a21caf" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="name" stroke="#cbd5e1" fontSize={14} tickLine={false} axisLine={false} />
-              <YAxis stroke="#cbd5e1" fontSize={14} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ background: '#181f2e', border: 'none', borderRadius: 8, color: '#fff' }} cursor={{ fill: '#33415533' }} />
-              <Legend wrapperStyle={{ color: '#fff' }} />
-              <Bar dataKey="issues" fill="url(#barGradient)" radius={[8, 8, 0, 0]} barSize={36} />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="w-full max-w-4xl bg-[#181f2e] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-gray-800 shadow-2xl flex flex-col items-center">
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-4 sm:mb-6 font-sans text-center">Weekly Issue Activity</h2>
+          <div className="w-full h-48 sm:h-64 md:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} className="font-sans">
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#a21caf" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis 
+                  dataKey="name" 
+                  stroke="#cbd5e1" 
+                  fontSize={12} 
+                  tickLine={false} 
+                  axisLine={false} 
+                />
+                <YAxis 
+                  stroke="#cbd5e1" 
+                  fontSize={12} 
+                  tickLine={false} 
+                  axisLine={false} 
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    background: '#181f2e', 
+                    border: 'none', 
+                    borderRadius: 8, 
+                    color: '#fff',
+                    fontSize: '14px'
+                  }} 
+                  cursor={{ fill: '#33415533' }} 
+                />
+                <Legend wrapperStyle={{ color: '#fff', fontSize: '12px' }} />
+                <Bar dataKey="issues" fill="url(#barGradient)" radius={[8, 8, 0, 0]} barSize={36} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </main>
     </div>
