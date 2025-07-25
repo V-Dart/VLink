@@ -5,12 +5,14 @@ import { useState, useEffect } from "react";
 import { FaBars, FaUserCircle } from "react-icons/fa";
 import logo from "../../assets/logo-profile.png";
 import ProfilePicture from "../ProfilePicture";
-import SlideMenu from "./SlideMenu";
+import SlideMenu from "./Slidemenu";
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null);
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isHoveringMenu, setIsHoveringMenu] = useState(false);
+  const [isPermanent, setPermanent] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem('user');
@@ -29,10 +31,25 @@ export default function Sidebar() {
     navigate('/po/logout');
   };
 
-  // Hamburger hover/click logic
-  const handleHamburgerHover = () => setMenuOpen(true);
-  const handleHamburgerLeave = () => setMenuOpen(false);
-  const handleHamburgerClick = () => setMenuOpen((open) => !open);
+  // Improved hover/click logic
+  const handleHamburgerHover = () => { 
+    if (!isPermanent) setMenuOpen(true); 
+  };
+  const handleHamburgerLeave = () => { 
+    if (!isPermanent && !isHoveringMenu) setMenuOpen(false); 
+  };
+  const handleHamburgerClick = () => { 
+    setPermanent((prev) => !prev); 
+    setMenuOpen((prev) => (!isPermanent ? true : false)); 
+  };
+  const handleMenuHover = () => { 
+    setIsHoveringMenu(true); 
+    if (!isPermanent) setMenuOpen(true); 
+  };
+  const handleMenuLeave = () => { 
+    setIsHoveringMenu(false); 
+    if (!isPermanent) setMenuOpen(false); 
+  };
 
   return (
     <>
@@ -92,7 +109,12 @@ export default function Sidebar() {
           </div>
         </div>
       </aside>
-      <SlideMenu isOpen={isMenuOpen} onClose={() => setMenuOpen(false)} />
+      <SlideMenu 
+        isOpen={isMenuOpen} 
+        onClose={() => setMenuOpen(false)}
+        onMenuHover={handleMenuHover}
+        onMenuLeave={handleMenuLeave}
+      />
     </>
   );
 } 
